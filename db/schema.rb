@@ -37,7 +37,7 @@ ActiveRecord::Schema.define(version: 2020_07_09_003232) do
     t.string "status"
     t.string "notes"
     t.string "email"
-    t.integer "phone_number"
+    t.string "phone_number"
     t.integer "column_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

@@ -7,7 +7,7 @@ class CreateLeads < ActiveRecord::Migration[6.0]
       t.string :status
       t.string :notes
       t.string :email
-      t.integer :phone_number
+      t.string :phone_number
       t.integer :column_id
 
       t.timestamps
