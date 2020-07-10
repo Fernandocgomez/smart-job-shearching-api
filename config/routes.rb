@@ -26,11 +26,10 @@ Rails.application.routes.draw do
 
   post 'users/new' => 'users#new'
   get 'users/index' => 'users#index'
-  get 'users/create'
-  get 'users/show'
-  get 'users/edit'
-  get 'users/update'
-  get 'users/destroy'
+  post 'users/create' => 'users#create'
+  get 'users/show/:id' => 'users#show'
+  put 'users/update/:id' => 'users#update'
+  delete 'users/destroy/:id' => 'users#destroy'
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end
