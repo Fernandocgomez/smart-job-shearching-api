@@ -25,11 +25,11 @@ Rails.application.routes.draw do
   get 'boards/destroy'
 
   post 'users/new' => 'users#new'
-  get 'users/index' => 'users#index'
-  post 'users/create' => 'users#create'
-  get 'users/show/:id' => 'users#show'
-  put 'users/update/:id' => 'users#update'
-  delete 'users/destroy/:id' => 'users#destroy'
+  get 'users' => 'users#index'
+  post 'users' => 'users#create'
+  get 'user/:id' => 'users#show'
+  put 'user/:id' => 'users#update'
+  delete 'user/:id' => 'users#destroy'
 
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 end

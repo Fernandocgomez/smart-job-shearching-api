@@ -1,54 +1,50 @@
 class UsersController < ApplicationController
   def new
     user = User.new(user_params)
-    render json: {"resp" => {"username" => user.username, "email" => user.email}}, status: 201
+    if user.valid? 
+      render json: {"resp" => UserSerializer.new(user)}, status: 201
+    else 
+      render json: {'resp' => {'errors' => user.errors.messages}} ,status: 400
+    end
   end
 
   def index
     users = User.all
-    render json: {resp: users}, status: 200
+    render json: {"resp" => users}, status: 200
   end
 
   def create
-    user = User.create(user_params)
-    render json: {"resp" => {"id" => user.id, "username" => user.username, "email" => user.email}}, status: 201
+    user = User.new(user_params)
+    if user.valid? 
+      user.save
+      render json: {"resp" => UserSerializer.new(user)}, status: 201
+    else 
+      render json: {'resp' => {'errors' => user.errors.messages}} ,status: 400
+    end
   end
 
   def show
     user = User.find_by_id(params[:id])
     if user 
-      render json: {"resp" => {
-        "id" => user.id,
-        "username" => user.username, 
-        "email" => user.email,
-        "first_name" => user.first_name, 
-        "last_name" => user.last_name, 
-        "street_address" => user.street_address, 
-        "street_address_2" => user.street_address_2, 
-        "city" => user.city, 
-        "state" => user.state, 
-        "zipcode" => user.zipcode
-      }}, status: 200
+      render json: {"resp" => UserSerializer.new(user)}, status: 200
     else 
-      render status: 404
+      render json: {"resp" => {"message" => "User can't be found"}}, status: 404
     end
   end
 
+
   def update
     user = User.find_by_id(params[:id])
-    user.update(user_params)
-    render json: {'resp' => {
-      "id" => user.id,
-      "username" => user.username, 
-      "email" => user.email,
-      "first_name" => user.first_name, 
-      "last_name" => user.last_name, 
-      "street_address" => user.street_address, 
-      "street_address_2" => user.street_address_2, 
-      "city" => user.city, 
-      "state" => user.state, 
-      "zipcode" => user.zipcode
-    }}, status: 200
+    if user 
+      user.update(user_params)
+      if user.valid?
+        render json: {'resp' => UserSerializer.new(user)}, status: 200
+      else 
+        render json: {'resp' => {'errors' => user.errors.messages}} ,status: 400
+      end
+    else 
+      render json: {"resp" => {"message" => "User can't be found"}}, status: 404
+    end
   end
 
   def destroy
