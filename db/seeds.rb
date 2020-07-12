@@ -13,14 +13,15 @@ Lead.destroy_all
 user_1 = User.create(
     username: "fernandocgomez", 
     email: "fernandocgomez@live.com", 
-    password_digest: "password", 
+    password_digest: "Ilovemytacos32%",
+    password_digest_confirmation: "Ilovemytacos32%",
     first_name: "Fernando", 
     last_name: "Gomez", 
     street_address: "11900 City Park Central Ln", 
     street_address_2: "7210", 
     city: "Houston", 
     state: "Tx", 
-    zipcode: 77047
+    zipcode: "77047"
 )
 
 board_1 = Board.create(
@@ -48,14 +49,15 @@ lead_1 = Lead.create(
 user_2 = User.create(
     username: "cristobal", 
     email: "cristobal@live.com", 
-    password_digest: "password", 
+    password_digest: "Ilovemytacos32%",
+    password_digest_confirmation: "Ilovemytacos32%",
     first_name: "Cristobal", 
     last_name: "Gomez", 
     street_address: "11900 City Park Central Ln", 
     street_address_2: "7211", 
     city: "Houston", 
     state: "Tx", 
-    zipcode: 77047
+    zipcode: "77047"
 )
 
 board_2 = Board.create(

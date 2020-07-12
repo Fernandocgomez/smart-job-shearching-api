@@ -5,27 +5,29 @@ RSpec.describe "Users", type: :request do
     @user_valid_params = {
       username: "fernandocgomez",
       email: "fernandocgomez@live.com",
-      password_digest: "password",
+      password_digest: "Ilovemytacos32%",
+      password_digest_confirmation: "Ilovemytacos32%",
       first_name: "Fernando",
       last_name: "Gomez",
       street_address: "11900 City Park Central Ln",
       street_address_2: "7210",
       city: "Houston",
       state: "Tx",
-      zipcode: 77047,
+      zipcode: "77047",
     }
 
     @user_invalid_params = {
       username: nil,
       email: "fernandocgomez@live.com",
-      password_digest: "password",
+      password_digest: "Ilovemytacos32%",
+      password_digest_confirmation: "Ilovemytacos32%",
       first_name: "Fernando",
       last_name: "Gomez",
       street_address: "11900 City Park Central Ln",
       street_address_2: "7210",
       city: "Houston",
       state: "Tx",
-      zipcode: 77047,
+      zipcode: "77047",
     }
 
     @matcher_user_instance = {
@@ -39,6 +41,17 @@ RSpec.describe "Users", type: :request do
       "city" => @user_valid_params[:city],
       "state" => @user_valid_params[:state],
       "zipcode" => @user_valid_params[:zipcode],
+    }
+
+    @user_changes = {
+      first_name: "Cris",
+      last_name: "Cruz",
+      password_digest_confirmation: "Ilovemytacos32%"
+    }
+
+    @user_negative_changes = {
+      username: nil,
+      password_digest_confirmation: "Ilovemytacos@"
     }
   end
   describe "when sending a POST request to users/new" do
@@ -76,7 +89,7 @@ RSpec.describe "Users", type: :request do
         post "/users/new", params: @user_invalid_params
         json = JSON.parse(response.body)
 
-        expect(json["resp"]["errors"]).to match({ "username" => ["can't be blank"] })
+        expect(json["resp"]["errors"]).to include("username")
       end
     end
   end
@@ -140,7 +153,7 @@ RSpec.describe "Users", type: :request do
         post "/users", params: @user_invalid_params
         json = JSON.parse(response.body)
 
-        expect(json["resp"]["errors"]).to match({ "username" => ["can't be blank"] })
+        expect(json["resp"]["errors"]).to include("username")
       end
     end
   end
@@ -185,17 +198,6 @@ RSpec.describe "Users", type: :request do
   end
 
   describe "When sending a PUT request to users/update/:id" do
-    before(:each) do
-      @user_changes = {
-        first_name: "Cris",
-        last_name: "Cruz",
-      }
-
-      @user_negative_changes = {
-        username: nil,
-      }
-    end
-
     context "If request is succesful" do
       it "returns a http 200 when a specific record gets updated" do
         post "/users", params: @user_valid_params
@@ -253,7 +255,7 @@ RSpec.describe "Users", type: :request do
         put "/user/#{temp_user["resp"]["id"]}", params: @user_negative_changes
         json = JSON.parse(response.body)
 
-        expect(json["resp"]["errors"]).to match({ "username" => ["can't be blank"] })
+        expect(json["resp"]["errors"]).to include("username")
       end
     end
   end

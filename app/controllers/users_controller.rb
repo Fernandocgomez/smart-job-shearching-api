@@ -1,7 +1,7 @@
 class UsersController < ApplicationController
   def new
     user = User.new(user_params)
-    if user.valid? 
+    if user.valid?
       render json: {"resp" => UserSerializer.new(user)}, status: 201
     else 
       render json: {'resp' => {'errors' => user.errors.messages}} ,status: 400
@@ -60,7 +60,19 @@ class UsersController < ApplicationController
   private
 
   def user_params
-    params.permit(:username, :email, :password_digest, :first_name, :last_name, :street_address, :username, :street_address_2, :city, :state, :zipcode)
+    params.permit(
+      :username, 
+      :email, 
+      :password_digest, 
+      :password_digest_confirmation,
+      :first_name, 
+      :last_name, 
+      :street_address, 
+      :street_address_2, 
+      :city, 
+      :state, 
+      :zipcode
+    )
   end
 end
 
