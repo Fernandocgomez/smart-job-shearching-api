@@ -1,17 +1,16 @@
 class BoardsController < ApplicationController
-  def new
-  end
-
-  def index
-  end
 
   def create
+    board = Board.new(board_params)
+    if board.valid? 
+      board.save
+      render json: {'resp' => BoardSerializer.new(board)}, status: 201 
+    else
+      render json: {'resp' => board.errors.messages}, status: 400
+    end
   end
 
   def show
-  end
-
-  def edit
   end
 
   def update
@@ -19,4 +18,14 @@ class BoardsController < ApplicationController
 
   def destroy
   end
+
+  private
+
+  def board_params
+    params.permit(
+      :name, 
+      :user_id
+    )
+  end
+
 end

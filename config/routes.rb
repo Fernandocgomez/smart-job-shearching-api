@@ -16,11 +16,8 @@ Rails.application.routes.draw do
   get 'columns/update'
   get 'columns/destroy'
 
-  get 'boards/new'
-  get 'boards/index'
-  get 'boards/create'
+  post '/create' => 'boards#create'
   get 'boards/show'
-  get 'boards/edit'
   get 'boards/update'
   get 'boards/destroy'
 
