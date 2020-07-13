@@ -16,10 +16,10 @@ Rails.application.routes.draw do
   get 'columns/update'
   get 'columns/destroy'
 
-  post '/create' => 'boards#create'
-  get 'boards/show'
-  get 'boards/update'
-  get 'boards/destroy'
+  post '/boards' => 'boards#create'
+  get '/board/:id' => 'boards#show'
+  put 'board/:id' => 'boards#update'
+  delete 'board/:id' => 'boards#destroy'
 
   post 'users/new' => 'users#new'
   get 'users' => 'users#index'

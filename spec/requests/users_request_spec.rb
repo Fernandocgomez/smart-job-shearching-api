@@ -2,19 +2,9 @@ require "rails_helper"
 
 RSpec.describe "Users", type: :request do
   before(:each) do
-    @user_valid_params = {
-      username: "fernandocgomez",
-      email: "fernandocgomez@live.com",
-      password_digest: "Ilovemytacos32%",
-      password_digest_confirmation: "Ilovemytacos32%",
-      first_name: "Fernando",
-      last_name: "Gomez",
-      street_address: "11900 City Park Central Ln",
-      street_address_2: "7210",
-      city: "Houston",
-      state: "Tx",
-      zipcode: "77047",
-    }
+    # get_valid_user_params return and object with the defaul test user
+    # create_test_instances.rb
+    @user_valid_params = get_valid_user_params
 
     @user_invalid_params = {
       username: nil,
