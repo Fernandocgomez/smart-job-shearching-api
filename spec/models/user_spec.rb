@@ -1,44 +1,24 @@
 require "rails_helper"
 
 RSpec.describe User, type: :model do
-  subject {
-    described_class.new(
-      username: "fernandocgomez",
-      email: "fernandocgomez@live.com",
-      password_digest: "Ilovemytacos32%",
-      password_digest_confirmation: "Ilovemytacos32%",
-      first_name: "Fernando",
-      last_name: "Gomez",
-      street_address: "11900 City Park Central Ln",
-      street_address_2: "7210",
-      city: "Houston",
-      state: "Tx",
-      zipcode: "77047",
-    )
+  subject { 
+    # This create an instance of the User model
+    # create_test_instances.rb
+    defaul_user_instance
   }
 
   describe "validations" do
     describe "username" do
-      it "must be present" do
+      it "must be presence" do
         expect(subject).to be_valid
         subject.username = nil
         expect(subject).to_not be_valid
       end
 
       it "must be unique" do
-        described_class.create!(
-          username: "fernandocgomez",
-          email: "fernandocgomez@live.com",
-          password_digest: "Ilovemytacos32%",
-          password_digest_confirmation: "Ilovemytacos32%",
-          first_name: "Fernando",
-          last_name: "Gomez",
-          street_address: "11900 City Park Central Ln",
-          street_address_2: "7210",
-          city: "Houston",
-          state: "Tx",
-          zipcode: 77047,
-        )
+        # This create an instance of the User model without validations (create!)
+        # create_test_instances.rb
+        deaful_user_instance_without_validations
 
         expect(subject).to_not be_valid
       end
@@ -58,19 +38,9 @@ RSpec.describe User, type: :model do
       end
 
       it "must be unique" do
-        described_class.create!(
-          username: "fernandocgomez",
-          email: "fernandocgomez@live.com",
-          password_digest: "Ilovemytacos32%",
-          password_digest_confirmation: "Ilovemytacos32%",
-          first_name: "Fernando",
-          last_name: "Gomez",
-          street_address: "11900 City Park Central Ln",
-          street_address_2: "7210",
-          city: "Houston",
-          state: "Tx",
-          zipcode: 77047,
-        )
+        # This create an instance of the User model without validations (create!)
+        # create_test_instances.rb
+        deaful_user_instance_without_validations
 
         expect(subject).to_not be_valid
       end

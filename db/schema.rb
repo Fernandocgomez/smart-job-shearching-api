@@ -16,8 +16,8 @@ ActiveRecord::Schema.define(version: 2020_07_09_003232) do
   enable_extension "plpgsql"
 
   create_table "boards", force: :cascade do |t|
-    t.string "name"
-    t.integer "user_id"
+    t.string "name", null: false
+    t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
