@@ -40,7 +40,7 @@ RSpec.describe "Boards", type: :request do
     end
 
     context "if request fails" do
-      it "returns http success" do
+      it "returns http 400" do
         @params[:name] = nil
         post "/boards", params: @params
 
@@ -173,7 +173,7 @@ RSpec.describe "Boards", type: :request do
     end
 
     context "If request fails" do
-      it "returns a 404 htto status" do
+      it "returns a 404 http status" do
         delete "/board/#{@json["resp"]["id"] + 1}"
 
         expect(response).to have_http_status(404)

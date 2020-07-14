@@ -8,13 +8,9 @@ Rails.application.routes.draw do
   get 'leads/update'
   get 'leads/destroy'
 
-  get 'columns/new'
-  get 'columns/index'
-  get 'columns/create'
-  get 'columns/show'
-  get 'columns/edit'
-  get 'columns/update'
-  get 'columns/destroy'
+  post 'columns' => 'columns#create'
+  put 'column/:id' => 'columns#update'
+  delete 'column/:id' => 'columns#destroy'
 
   post '/boards' => 'boards#create'
   get '/board/:id' => 'boards#show'
