@@ -8,7 +8,9 @@ class User < ApplicationRecord
   validates_associated :boards
 
   # Global validations
-  validates :username, :email, :password_digest, :password_digest_confirmation, :first_name, :last_name, :street_address, :street_address_2, :city, :state, :zipcode, { presence: true }
+  validates :username, :email, :password_digest, :password_digest_confirmation, :first_name, :last_name, :street_address, :street_address_2, :city, :state, :zipcode, { 
+    presence: true 
+  }
 
   # username validations
   validates :username, {

@@ -39,7 +39,7 @@ RSpec.describe Board, type: :model do
     describe 'user_id' do
         it "must be presence" do 
             expect(subject).to be_valid
-            subject.user_id = subject.user_id + 1
+            subject.user_id = nil
             expect(subject).to_not be_valid
         end
     end

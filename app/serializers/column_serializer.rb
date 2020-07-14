@@ -1,3 +1,3 @@
 class ColumnSerializer < ActiveModel::Serializer
-  attributes :id
+  attributes :id, :name, :position, :board_id
 end
