@@ -59,5 +59,11 @@ RSpec.describe Column, type: :model do
       subject.board_id = nil
       expect(subject).to_not be_valid
     end
+
+    it "must exist on the DB" do
+      expect(subject).to be_valid
+      subject.board_id = subject.board_id + 1
+      expect(subject).to_not be_valid
+    end
   end
 end
