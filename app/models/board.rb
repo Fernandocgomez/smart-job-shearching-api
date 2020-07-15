@@ -1,5 +1,5 @@
 class Board < ApplicationRecord
-    has_many :columns
+    has_many :columns, dependent: :delete_all
     belongs_to :user
 
     # associations validations

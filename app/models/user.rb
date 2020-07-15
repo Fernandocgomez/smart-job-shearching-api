@@ -1,5 +1,5 @@
 class User < ApplicationRecord
-  has_many :boards
+  has_many :boards, dependent: :delete_all
   has_secure_password
 
   # https://guides.rubyonrails.org/active_record_validations.html
