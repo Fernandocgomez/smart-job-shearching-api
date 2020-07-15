@@ -1,5 +1,5 @@
 class Column < ApplicationRecord
-    has_many :leads
+    has_many :leads, dependent: :delete_all
     belongs_to :board
 
     # associations validations
