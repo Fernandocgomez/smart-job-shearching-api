@@ -47,6 +47,15 @@ RSpec.describe "Boards", type: :request do
         expect(response).to have_http_status(400)
       end
 
+      it "must not allow using an inexistent record" do 
+        @params['user_id'] = @user.id + 1
+        post "/boards", params: @params
+        json_board = JSON.parse(response.body)
+
+        expect(json_board['resp']).to include("user")
+        expect(json_board['resp']).to_not match({})
+      end
+
       it "return an object of error messages" do
         @params[:name] = nil
         post "/boards", params: @params
@@ -132,6 +141,15 @@ RSpec.describe "Boards", type: :request do
         json_board = JSON.parse(response.body)
 
         expect(json_board["resp"]).to_not match({})
+      end
+
+      it "must not allow using an inexistent record" do 
+        @params['user_id'] = @user.id + 1
+        put "/board/#{@json["resp"]["id"]}", params: @params
+        json_board = JSON.parse(response.body)
+
+        expect(json_board['resp']).to include("user")
+        expect(json_board['resp']).to_not match({})
       end
 
       it "returns a 404 http status if board can't be found" do
