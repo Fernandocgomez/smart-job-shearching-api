@@ -1,11 +1,14 @@
 class User < ApplicationRecord
   has_many :boards, dependent: :delete_all
+  has_many :job_positions, dependent: :delete_all
+
   has_secure_password
 
   # https://guides.rubyonrails.org/active_record_validations.html
 
   # associations validations
-  validates_associated :boards
+  validates_associated :boards 
+  validates_associated :job_positions 
 
   # Global validations
   validates :username, :email, :password_digest, :password_digest_confirmation, :first_name, :last_name, :street_address, :street_address_2, :city, :state, :zipcode, { 
