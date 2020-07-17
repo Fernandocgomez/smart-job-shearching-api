@@ -17,8 +17,6 @@ Rails.application.routes.draw do
   put 'board/:id' => 'boards#update'
   delete 'board/:id' => 'boards#destroy'
 
-  post 'users/new' => 'users#new'
-  get 'users' => 'users#index'
   post 'users' => 'users#create'
   get 'user/:id' => 'users#show'
   put 'user/:id' => 'users#update'

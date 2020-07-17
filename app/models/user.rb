@@ -11,7 +11,7 @@ class User < ApplicationRecord
   validates_associated :job_positions 
 
   # Global validations
-  validates :username, :email, :password_digest, :password_digest_confirmation, :first_name, :last_name, :street_address, :street_address_2, :city, :state, :zipcode, { 
+  validates :username, :email, :password_digest, :password_digest_confirmation, :first_name, :last_name, :street_address, :city, :state, :zipcode, { 
     presence: true 
   }
 
@@ -51,7 +51,7 @@ class User < ApplicationRecord
 
   # street_address validations
 
-  #   street_address_2 validations
+  # street_address_2 validations
 
   # city validations
 

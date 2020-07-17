@@ -7,11 +7,11 @@ module CreateTestInstances
     password_digest_confirmation: "Ilovemytacos32%",
     first_name: "Fernando",
     last_name: "Gomez",
-    street_address: "11900 City Park Central Ln",
+    street_address: "11900 City Park Central Ln", 
     street_address_2: "7210",
     city: "Houston",
     state: "Tx",
-    zipcode: "77047",
+    zipcode: "77047"
   }
 
   def defaul_user_instance

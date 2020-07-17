@@ -1,10 +1,10 @@
 require "rails_helper"
 
 RSpec.describe User, type: :model do
-  subject { 
+  subject {
     # This create an instance of the User model
-    # create_test_instances.rb
-    defaul_user_instance
+    # requests_helper.rb
+    create_user
   }
 
   describe "validations" do
@@ -17,8 +17,8 @@ RSpec.describe User, type: :model do
 
       it "must be unique" do
         # This create an instance of the User model without validations (create!)
-        # create_test_instances.rb
-        deaful_user_instance_without_validations
+        # requests_helper.rb
+        create_user_without_validations
 
         expect(subject).to_not be_valid
       end
@@ -39,8 +39,8 @@ RSpec.describe User, type: :model do
 
       it "must be unique" do
         # This create an instance of the User model without validations (create!)
-        # create_test_instances.rb
-        deaful_user_instance_without_validations
+        # requests_helper.rb
+        create_user_without_validations
 
         expect(subject).to_not be_valid
       end
@@ -104,97 +104,94 @@ RSpec.describe User, type: :model do
       end
     end
 
-    describe 'first_name' do
-      it "must be presence"  do 
+    describe "first_name" do
+      it "must be presence" do
         expect(subject).to be_valid
         subject.first_name = nil
         expect(subject).to_not be_valid
       end
 
-      it "only letters are allowed" do 
+      it "only letters are allowed" do
         expect(subject).to be_valid
         subject.first_name = "Fernando32%"
         expect(subject).to_not be_valid
       end
 
-      it "must be at least 2 characters and not larger than 15" do 
+      it "must be at least 2 characters and not larger than 15" do
         expect(subject).to be_valid
         subject.first_name = "Fernandoferferferferferferferfer"
         expect(subject).to_not be_valid
         subject.first_name = "F"
         expect(subject).to_not be_valid
-      end 
+      end
     end
 
-    describe 'last_name' do
-      it "must be presence"  do 
+    describe "last_name" do
+      it "must be presence" do
         expect(subject).to be_valid
         subject.last_name = nil
         expect(subject).to_not be_valid
       end
 
-      it "only letters are allowed" do 
+      it "only letters are allowed" do
         expect(subject).to be_valid
         subject.last_name = "Gomez32%"
         expect(subject).to_not be_valid
       end
 
-      it "must be at least 2 characters and not larger than 15" do 
+      it "must be at least 2 characters and not larger than 15" do
         expect(subject).to be_valid
         subject.last_name = "Gomezferferferferferferferferferfer"
         expect(subject).to_not be_valid
         subject.last_name = "G"
         expect(subject).to_not be_valid
-      end 
+      end
     end
 
-    describe 'street_address' do
-      it "must be presence" do 
+    describe "street_address" do
+      it "must be presence" do
         expect(subject).to be_valid
         subject.street_address = nil
         expect(subject).to_not be_valid
       end
     end
 
-    describe 'street_address_2' do
-      it "must be presence" do 
+    describe "street_address_2" do
+      it "optional" do
         expect(subject).to be_valid
         subject.street_address_2 = nil
-        expect(subject).to_not be_valid
+        expect(subject).to be_valid
       end
     end
 
-    describe 'city' do
-      it "must be presence" do 
+    describe "city" do
+      it "must be presence" do
         expect(subject).to be_valid
         subject.city = nil
         expect(subject).to_not be_valid
       end
     end
 
-    describe 'state' do
-      it "must be presence" do 
+    describe "state" do
+      it "must be presence" do
         expect(subject).to be_valid
         subject.state = nil
         expect(subject).to_not be_valid
       end
     end
 
-    describe 'zipcode' do
-
-      it "must be presence" do 
+    describe "zipcode" do
+      it "must be presence" do
         expect(subject).to be_valid
         subject.zipcode = nil
         expect(subject).to_not be_valid
       end
 
-      it "must be five digits" do 
+      it "must be five digits" do
         expect(subject).to be_valid
         subject.zipcode = "7704"
         expect(subject).to_not be_valid
       end
-
     end
-
   end
 end
