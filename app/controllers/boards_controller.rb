@@ -14,7 +14,7 @@ class BoardsController < ApplicationController
     if board
       render json: { "resp" => BoardSerializer.new(board) }, status: 200
     else
-      render json: { "resp" => "Board can't be found" }, status: 400
+      render json: { "resp" => "board can't be found" }, status: 400
     end
   end
 
@@ -28,7 +28,7 @@ class BoardsController < ApplicationController
         render json: { "resp" => board.errors.messages }, status: 400
       end
     else
-      render json: { "resp" => "Board can't be found" }, status: 404
+      render json: { "resp" => "board can't be found" }, status: 404
     end
   end
 
@@ -36,9 +36,9 @@ class BoardsController < ApplicationController
     board = Board.find_by_id(params[:id])
     if board
       board.destroy
-      render json: { "resp" => "Board has been deleted" }, status: 200
+      render json: { "resp" => "board has been deleted" }, status: 200
     else
-      render json: { "resp" => "Board can't be found" }, status: 404
+      render json: { "resp" => "board can't be found" }, status: 404
     end
   end
 
