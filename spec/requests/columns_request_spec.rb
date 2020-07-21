@@ -4,136 +4,132 @@ RSpec.describe "Columns", type: :request do
   before(:each) do
     # This create an instance of the User model
     # create_test_instances.rb
-    @user = defaul_user_instance
-    @board = default_board(@user.id)
-    @params = { name: "My first column", position: 0, board_id: @board.id }
-    @matching_return = { "id" => nil, "name" => "My first column", "position" => 0, "board_id" => @board.id }
+    @user = create_user
+    @board = create_board(@user.id)
+    @params = get_column_params(@board.id)
+    @invalid_params = get_invalid_column_params(@board.id)
+    @matcher = { "id" => nil, "name" => "My first column", "position" => 0, "board_id" => @board.id }
   end
 
   describe "POST /columns" do
-    context "if request is succesful" do
-      it "returns http 201 status" do
+    context "request is succesful" do
+      it "returns a 201 status" do
         post "/columns", params: @params
 
         expect(response).to have_http_status(201)
       end
       it "returns an instance of the Column model in JSON" do
         post "/columns", params: @params
-        resp_parsed = JSON.parse(response.body)
-        @matching_return["id"] = resp_parsed["resp"]["id"]
+        resp_json = JSON.parse(response.body)
+        @matcher["id"] = resp_json["resp"]["id"]
 
-        expect(resp_parsed["resp"]).to match(@matching_return)
+        expect(resp_json["resp"]).to match(@matcher)
       end
 
-      it "adds a new record on the DB" do
+      it "saves the instance of the Column on the DB" do
         db_size = Column.all.size
         post "/columns", params: @params
 
         expect(Column.all.size).to eql(db_size + 1)
       end
     end
-    context "if request fails" do
-      it "returns http 400" do
-        @params[:name] = nil
-        post "/columns", params: @params
+    context "request fails" do
+      it "returns a 400 status" do
+        post "/columns", params: @invalid_params
 
         expect(response).to have_http_status(400)
       end
-      it "returns an object of error messages in JSON" do
-        @params[:name] = nil
-        post "/columns", params: @params
-        resp_parsed = JSON.parse(response.body)
+      it "returns an object of errors on JSON" do
+        post "/columns", params: @invalid_params
+        resp_json = JSON.parse(response.body)
 
-        expect(resp_parsed["resp"]).to_not match({})
-        expect(resp_parsed["resp"]).to include("name")
+        expect(resp_json["resp"]).to_not match({})
+        expect(resp_json["resp"]).to include("name")
       end
     end
   end
 
   describe "PUT /column/:id" do
     before(:each) do
-        column_to_update = post "/columns", params: @params
-        @resp_parse_of_column_to_update = JSON.parse(response.body)
+      post "/columns", params: @params
+      # @column_resp = JSON.parse(response.body)
+      @column_resp = JSON.parse(response.body)
+      @update_params = { "name" => "New updated name" }
+      @update_invalid_params = { "name" => "M" }
     end
-    context "if request is succesful" do
-      it "returns a 200 http status" do
-        @params["name"] = "New updated name"
-        put "/column/#{@resp_parse_of_column_to_update["resp"]["id"]}", params: @params
+    context "request is succesful" do
+      it "returns a 200 status" do
+        put "/column/#{@column_resp["resp"]["id"]}", params: @update_params
 
         expect(response).to have_http_status(200)
       end
-      it "returns the updated instance of Column in JSON" do
-        @params["name"] = "New updated name"
-        put "/column/#{@resp_parse_of_column_to_update["resp"]["id"]}", params: @params
-        resp_parsed = JSON.parse(response.body)
-        @matching_return["id"] = @resp_parse_of_column_to_update["resp"]["id"]
-        @matching_return["name"] = "New updated name"
+      it "returns the updated instance of the Column model on JSON" do
+        put "/column/#{@column_resp["resp"]["id"]}", params: @update_params
+        resp_json = JSON.parse(response.body)
+        @matcher["id"] = @column_resp["resp"]["id"]
+        @matcher["name"] = @update_params["name"]
 
-        expect(resp_parsed["resp"]).to match(@matching_return)
+        expect(resp_json["resp"]).to match(@matcher)
       end
     end
-    context "if request fails becuase the column cannot be found" do
-      it "returns a 404 http status" do
-        @params["name"] = "New updated name"
-        put "/column/#{@resp_parse_of_column_to_update["resp"]["id"] + 1}", params: @params
+    context "request fails(invalid id)" do
+      it "returns a 404 status" do
+        put "/column/#{@column_resp["resp"]["id"] + 1}", params: @update_params
 
         expect(response).to have_http_status(404)
       end
-      it "returns an error message in JSON" do
-        @params["name"] = "New updated name"
-        put "/column/#{@resp_parse_of_column_to_update["resp"]["id"] + 1}", params: @params
-        resp_parsed = JSON.parse(response.body)
+      it "returns an error message on JSON" do
+        put "/column/#{@column_resp["resp"]["id"] + 1}", params: @update_params
+        resp_json = JSON.parse(response.body)
 
-        expect(resp_parsed["resp"]).to eql("column can't be found")
+        expect(resp_json["resp"]).to eql("column can't be found")
       end
     end
-    context "if request fails becuase the params are not valid" do
-      it "returns a 400 http status" do
-        @params["name"] = nil
-        put "/column/#{@resp_parse_of_column_to_update["resp"]["id"]}", params: @params
+    context "request fails(invalid paramas)" do
+      it "returns a 400 status" do
+        put "/column/#{@column_resp["resp"]["id"]}", params: @update_invalid_params
 
         expect(response).to have_http_status(400)
       end
       it "returns an object of error messages in JSON" do
-        @params["name"] = nil
-        put "/column/#{@resp_parse_of_column_to_update["resp"]["id"]}", params: @params
+        put "/column/#{@column_resp["resp"]["id"]}", params: @update_invalid_params
 
-        resp_parsed = JSON.parse(response.body)
+        resp_json = JSON.parse(response.body)
 
-        expect(resp_parsed["resp"]).to_not match({})
-        expect(resp_parsed["resp"]).to include("name")
+        expect(resp_json["resp"]).to_not match({})
+        expect(resp_json["resp"]).to include("name")
       end
     end
   end
 
   describe "DELETE /column/:id" do
     before(:each) do
-      column_to_update = post "/columns", params: @params
-      @resp_parse_of_column_to_update = JSON.parse(response.body)
+      post "/columns", params: @params
+      @column_resp = JSON.parse(response.body)
     end
-    context "if request is succesful" do
-      it "returns a 200 http status" do
-        delete "/column/#{@resp_parse_of_column_to_update["resp"]["id"]}"
+    context "request is successful" do
+      it "returns a 200 status" do
+        delete "/column/#{@column_resp["resp"]["id"]}"
 
         expect(response).to have_http_status(200)
       end
-      it "return a confirmation message in JSON" do
-        delete "/column/#{@resp_parse_of_column_to_update["resp"]["id"]}"
-        resp_parsed = JSON.parse(response.body)
+      it "returns a confirmation message on JSON" do
+        delete "/column/#{@column_resp["resp"]["id"]}"
+        resp_json = JSON.parse(response.body)
 
-        expect(resp_parsed["resp"]).to eql("column has been deleted")
+        expect(resp_json["resp"]).to eql("column has been deleted")
       end
     end
-    context "if request fails because column cannot be found on DB" do
-      it "return a 404 http status" do
-        delete "/column/#{@resp_parse_of_column_to_update["resp"]["id"] + 1}"
+    context "request fails" do
+      it "returns a 404 status" do
+        delete "/column/#{@column_resp["resp"]["id"] + 1}"
         expect(response).to have_http_status(404)
       end
-      it "returns an error message in JSON" do
-        delete "/column/#{@resp_parse_of_column_to_update["resp"]["id"] + 1}"
-        resp_parsed = JSON.parse(response.body)
+      it "rreturns an error message on JSON" do
+        delete "/column/#{@column_resp["resp"]["id"] + 1}"
+        resp_json = JSON.parse(response.body)
 
-        expect(resp_parsed["resp"]).to eql("column can't be found")
+        expect(resp_json["resp"]).to eql("column can't be found")
       end
     end
   end
