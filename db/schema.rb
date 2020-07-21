@@ -81,8 +81,6 @@ ActiveRecord::Schema.define(version: 2020_07_16_045054) do
     t.string "password_digest", null: false
     t.string "first_name", default: "default", null: false
     t.string "last_name", default: "default", null: false
-    t.string "street_address", default: "default", null: false
-    t.string "street_address_2"
     t.string "city", default: "default", null: false
     t.string "state", default: "default", null: false
     t.string "zipcode", null: false

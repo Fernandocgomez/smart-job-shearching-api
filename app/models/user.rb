@@ -11,7 +11,7 @@ class User < ApplicationRecord
   validates_associated :job_positions 
 
   # Global validations
-  validates :username, :email, :password_digest, :password_digest_confirmation, :first_name, :last_name, :street_address, :city, :state, :zipcode, { 
+  validates :username, :email, :password_digest, :password_digest_confirmation, :first_name, :last_name, :city, :state, :zipcode, { 
     presence: true 
   }
 
@@ -19,6 +19,7 @@ class User < ApplicationRecord
   validates :username, {
               uniqueness: true,
               length: { within: 8..20 },
+              format: { with: /\A[a-zA-Z]*\z/, message: "only letters are allowed" },
             }
 
   # email validations
@@ -30,28 +31,18 @@ class User < ApplicationRecord
   # password_digest validations
   validates :password_digest, {
               confirmation: true,
-              length: { within: 8..40 },
+              length: { within: 8..25 },
             }
   validates :password_digest, { format: { with: /[a-z]+/, message: "must contain at least one lowercase letter" } }
   validates :password_digest, { format: { with: /[A-Z]+/, message: "must contain at least one uppercase letter" } }
   validates :password_digest, { format: { with: /\d+/, message: "must contain at least one digit" } }
   validates :password_digest, { format: { with: /[^A-Za-z0-9]+/, message: "must contain at least one special character" } }
 
-  # first_name validations
-  validates :first_name, {
+  # first_name & last_name validations
+  validates :first_name, :last_name, {
     format: { with: /\A[a-zA-Z]*\z/, message: "only letters are allowed" },
     length: { within: 2..15 },
   }
-
-  # last_name validations
-  validates :last_name, {
-    format: { with: /\A[a-zA-Z]*\z/, message: "only letters are allowed" },
-    length: { within: 2..15 },
-  }
-
-  # street_address validations
-
-  # street_address_2 validations
 
   # city validations
 
@@ -60,5 +51,6 @@ class User < ApplicationRecord
   # zipcode validations
   validates :zipcode, {
               length: { is: 5 },
+              numericality: { only_integer: true }
             }
 end
