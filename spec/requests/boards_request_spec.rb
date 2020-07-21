@@ -1,207 +1,149 @@
 require "rails_helper"
-
 RSpec.describe "Boards", type: :request do
   before(:each) do
     # This create an instance of the User model
     # create_test_instances.rb
     @user = defaul_user_instance
-
-    @params = {
-      name: "My first board",
-      user_id: @user.id,
-    }
-
-    @resp_matcher = {
-      "name" => @params[:name],
-      "user_id" => @params[:user_id],
-    }
+    @params = get_board_params(@user['id'])
+    @matcher = @params
+    @invalid_params = get_board_invalid_params
   end
 
-  describe "POST /boards" do
-    context "if request is succesful when passing params" do
-      it "returns http success" do
+  describe 'POST /boards' do
+    context 'request is succesful' do
+      it 'returns a 201 status' do
         post "/boards", params: @params
         expect(response).to have_http_status(201)
       end
+      it 'returns an instance of the Board model on JSON' do
+        post "/boards", params: @params
+        resp_json = JSON.parse(response.body)
+        @matcher['id'] = resp_json['resp']['id']
 
-      it "saves the instance on the db" do
+        expect(resp_json['resp']).to match(@matcher)
+      end
+      it 'saves the instance of the Board on the DB' do
         db_size = Board.all.size
         post "/boards", params: @params
-        expect(Board.all.size).to_not eql(db_size)
-      end
 
-      it "returns an instance of the Board in JSON" do
-        post "/boards", params: @params
-        json = JSON.parse(response.body)
-        @resp_matcher["id"] = json["resp"]["id"]
-
-        expect(json["resp"]).to match(@resp_matcher)
+        expect(Board.all.size).to eq(db_size + 1)
       end
     end
-
-    context "if request fails" do
-      it "returns http 400" do
-        @params[:name] = nil
-        post "/boards", params: @params
-
+    context 'request fails' do
+      it 'returns a 400 status' do
+        post "/boards", params: @invalid_params
         expect(response).to have_http_status(400)
       end
+      it 'returns an object of errors on JSON' do
+        post "/boards", params: @invalid_params
+        resp_json = JSON.parse(response.body)
 
-      it "must not allow using an inexistent record" do 
-        @params['user_id'] = @user.id + 1
-        post "/boards", params: @params
-        json_board = JSON.parse(response.body)
-
-        expect(json_board['resp']).to include("user")
-        expect(json_board['resp']).to_not match({})
-      end
-
-      it "return an object of error messages" do
-        @params[:name] = nil
-        post "/boards", params: @params
-        json = JSON.parse(response.body)
-
-        expect(json["resp"]).to_not match({})
+        expect(resp_json["resp"]).to_not eq({})
       end
     end
   end
-
-  describe "GET /board/:id" do
+  describe 'GET /board/:id' do
     before(:each) do
       post "/boards", params: @params
-      @json = JSON.parse(response.body)
+      @board_resp = JSON.parse(response.body)
     end
-
-    context "If request is succesful" do
-      it "returns a 200 http status" do
-        get "/board/#{@json["resp"]["id"]}"
-
+    context 'request is successful' do
+      it 'returns a 200 status' do
+        get "/board/#{@board_resp['resp']['id']}"
         expect(response).to have_http_status(200)
       end
+      it 'returns an instance of the Board model on JSON basedon the id provided' do
+        get "/board/#{@board_resp['resp']['id']}"
+        resp_json = JSON.parse(response.body)
 
-      it "returns an instance of Board on JSON" do
-        get "/board/#{@json["resp"]["id"]}"
-        json_board = JSON.parse(response.body)
-        @resp_matcher["id"] = @json["resp"]["id"]
-
-        expect(json_board["resp"]).to match(@resp_matcher)
+        expect(resp_json['resp']).to match(@board_resp['resp'])
       end
     end
-
-    context "If request fails" do
-      it "returns a 400 http status" do
-        get "/board/#{@json["resp"]["id"] + 1}"
-
+    context 'request fails' do
+      it 'returns a 400 status' do
+        get "/board/#{@board_resp['resp']['id'] + 1}"
         expect(response).to have_http_status(400)
       end
-
-      it "returns an error message" do
-        get "/board/#{@json["resp"]["id"] + 1}"
-        json_board = JSON.parse(response.body)
-
-        expect(json_board["resp"]).to eql("Board can't be found")
+      it 'returns an error message on JSON' do
+        get "/board/#{@board_resp['resp']['id'] + 1}"
+        resp_json = JSON.parse(response.body)
+        expect(resp_json['resp']).to eq("board can't be found")
       end
     end
   end
-
-  describe "PUT /board/:id" do
+  describe 'PUT /board/:id' do
     before(:each) do
       post "/boards", params: @params
-      @json = JSON.parse(response.body)
+      @board_resp = JSON.parse(response.body)
+      @update_params = {"name" => "My newest board"}
+      @update_invalid_params = {"name" => "M"}
     end
-
-    context "If request is succesful" do
-      it "returns a 200 http status" do
-        put "/board/#{@json["resp"]["id"]}"
+    context 'request is succesful' do
+      it 'returns a 200 status' do
+        put "/board/#{@board_resp['resp']['id']}", params: @update_params
         expect(response).to have_http_status(200)
       end
+      it 'returns the updated instance of the Board model on JSON' do
+        put "/board/#{@board_resp['resp']['id']}", params: @update_params
+        resp_json = JSON.parse(response.body)
 
-      it "returns an updated instance of the Board on JSON" do
-        @params["name"] = "different name"
-        put "/board/#{@json["resp"]["id"]}", params: @params
-        json_board = JSON.parse(response.body)
-        @resp_matcher["id"] = @json["resp"]["id"]
-        @resp_matcher["name"] = "different name"
-
-        expect(json_board["resp"]).to match(@resp_matcher)
+        expect(resp_json["resp"]["name"]).to match(@update_params["name"])
       end
     end
-
-    context "If request fails" do
-      it "returns a 400 http status if params are not valid" do
-        @params["name"] = nil
-        put "/board/#{@json["resp"]["id"]}", params: @params
-
+    context 'request fails(invalid params)' do
+      it 'returns a 400 status' do
+        put "/board/#{@board_resp['resp']['id']}", params: @update_invalid_params
         expect(response).to have_http_status(400)
       end
+      it 'returns an object of errors on JSON' do
+        put "/board/#{@board_resp['resp']['id']}", params: @update_invalid_params
+        resp_json = JSON.parse(response.body)
 
-      it "return an object of error messages if 400 error" do
-        @params["name"] = nil
-        put "/board/#{@json["resp"]["id"]}", params: @params
-        json_board = JSON.parse(response.body)
-
-        expect(json_board["resp"]).to_not match({})
+        expect(resp_json["resp"]).to_not eq({})
       end
-
-      it "must not allow using an inexistent record" do 
-        @params['user_id'] = @user.id + 1
-        put "/board/#{@json["resp"]["id"]}", params: @params
-        json_board = JSON.parse(response.body)
-
-        expect(json_board['resp']).to include("user")
-        expect(json_board['resp']).to_not match({})
-      end
-
-      it "returns a 404 http status if board can't be found" do
-        put "/board/#{@json["resp"]["id"] + 1}", params: @params
+      
+    end
+    context 'request fails(invalid id)' do
+      it 'returns a 4040 status' do
+        put "/board/#{@board_resp['resp']['id'] + 1}", params: @update_params
 
         expect(response).to have_http_status(404)
       end
+      it 'returns an error message on JSON' do
+        put "/board/#{@board_resp['resp']['id'] + 1}", params: @update_params
+        resp_json = JSON.parse(response.body)
 
-      it "returns an error message if 404 error" do
-        put "/board/#{@json["resp"]["id"] + 1}", params: @params
-        json_board = JSON.parse(response.body)
-
-        expect(json_board["resp"]).to eql("Board can't be found")
-      end
+        expect(resp_json["resp"]).to eq("board can't be found")
+      end 
     end
   end
-
-  describe "DELETE /board/:id" do
-
+  describe 'DELETE /board/:id' do
     before(:each) do
-        post "/boards", params: @params
-        @json = JSON.parse(response.body)
+      post "/boards", params: @params
+      @board_resp = JSON.parse(response.body)
     end
-
-    context "If request is succesful" do
-
-      it "returns a 200 http status" do
-        delete "/board/#{@json["resp"]["id"]}"
-
+    context 'request is successful' do
+      it 'returns a 200 status' do
+        delete "/board/#{@board_resp['resp']['id']}"
         expect(response).to have_http_status(200)
       end
+      it 'returns a confirmation message on JSON' do
+        delete "/board/#{@board_resp['resp']['id']}"
+        resp_json = JSON.parse(response.body)
 
-      it "returns a confirmation message" do
-        delete "/board/#{@json["resp"]["id"]}"
-        json_board = JSON.parse(response.body)
-
-        expect(json_board["resp"]).to eql("Board has been deleted")
+        expect(resp_json['resp']).to eq("board has been deleted")
       end
     end
-
-    context "If request fails" do
-      it "returns a 404 http status" do
-        delete "/board/#{@json["resp"]["id"] + 1}"
-
+    context 'request fails' do
+      it 'returns a 404 status' do
+        delete "/board/#{@board_resp['resp']['id'] + 1}"
         expect(response).to have_http_status(404)
       end
+      it 'returns an error message on JSON' do
+        delete "/board/#{@board_resp['resp']['id'] + 1}"
+        resp_json = JSON.parse(response.body)
 
-      it "returns an error message" do
-        delete "/board/#{@json["resp"]["id"] + 1}"
-        json_board = JSON.parse(response.body)
-
-        expect(json_board["resp"]).to eql("Board can't be found")
+        expect(resp_json['resp']).to eq("board can't be found")
       end
     end
   end

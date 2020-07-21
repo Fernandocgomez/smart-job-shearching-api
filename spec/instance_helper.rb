@@ -1,4 +1,4 @@
-module RequestsHelper 
+module InstanceHelper 
 
     @@user_params = {
         "username" => "fernandocgomez",
@@ -40,6 +40,16 @@ module RequestsHelper
         "zipcode" => "77047"
     }
 
+    @@board_params = {
+        "name" => "My new board", 
+        "user_id" => nil
+    }
+
+    @@board_invalid_params = {
+        "name" => "My new board", 
+        "user_id" => nil
+    }
+
     def create_user
         User.create(@@user_params)
     end
@@ -58,6 +68,15 @@ module RequestsHelper
 
     def get_user_invalid_params 
         @@user_invalid_params
+    end
+
+    def get_board_params(id)
+        @@board_params['user_id'] = id
+        @@board_params
+    end
+
+    def get_board_invalid_params
+        @@board_invalid_params
     end
 
 
