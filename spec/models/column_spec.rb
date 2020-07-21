@@ -4,8 +4,8 @@ RSpec.describe Column, type: :model do
   before(:each) do
     # This create an instance of the User model
     # create_test_instances.rb
-    @user = defaul_user_instance
-    @board = default_board(@user.id)
+    @user = create_user
+    @board = create_board(@user.id)
   end
 
   subject { described_class.new(name: "This is the first column", position: 0, board_id: @board.id) }

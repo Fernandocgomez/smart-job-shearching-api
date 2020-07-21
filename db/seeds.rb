@@ -21,9 +21,7 @@ user_1 = User.create(
     password_digest: "Ilovemytacos32%",
     password_digest_confirmation: "Ilovemytacos32%",
     first_name: "Fernando", 
-    last_name: "Gomez", 
-    street_address: "11900 City Park Central Ln", 
-    street_address_2: "7210", 
+    last_name: "Gomez",
     city: "Houston", 
     state: "Tx", 
     zipcode: "77047"

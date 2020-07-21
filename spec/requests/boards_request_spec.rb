@@ -3,7 +3,7 @@ RSpec.describe "Boards", type: :request do
   before(:each) do
     # This create an instance of the User model
     # create_test_instances.rb
-    @user = defaul_user_instance
+    @user = create_user
     @params = get_board_params(@user['id'])
     @matcher = @params
     @invalid_params = get_board_invalid_params

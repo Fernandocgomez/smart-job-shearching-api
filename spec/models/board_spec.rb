@@ -4,7 +4,7 @@ RSpec.describe Board, type: :model do
   before(:each) do
     # This create an instance of the User model
     # create_test_instances.rb
-    @user = defaul_user_instance
+    @user = create_user
   end
 
   subject { described_class.new(name: "My amazing board", user_id: @user.id) }
