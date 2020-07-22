@@ -33,10 +33,27 @@ module InstanceHelper
     "zipcode" => "77047",
   }
 
-# <----------- User --------------->
+  @@lead_params = {
+    "first_name" => "Andrew",
+    "last_name" => "Sprague", 
+    "picture_url" => "https://media-exp1.licdn.com/dms/image/C5603AQE56P4YUjdGiw/profile-displayphoto-shrink_100_100/0?e=1599696000&v=beta&t=ZI3-yK0vAH9NH-XSH5Xq70G0nKsdBUHhAjeYEqd1w8s", 
+    "linkedin_url" => "/in/andrew-sprague-cfa/", 
+    "status" => "new", 
+    "notes" => "write a note...", 
+    "email" => "asprague@outlook.com",
+    "phone_number" => "3462600832", 
+    "column_id" => nil,
+    "company_id" => nil
+  }
+
+  # <----------- User --------------->
 
   def create_user
     User.create(@@user_params)
+  end
+
+  def create_user_instance
+    User.new(@@user_params)
   end
 
   def create_user_without_validations
@@ -55,12 +72,12 @@ module InstanceHelper
     @@user_invalid_params
   end
 
-# <----------- Board --------------->
+  # <----------- Board --------------->
 
-  def get_board_params(id)
+  def get_board_params(user_id)
     {
-        "name" => "My new board",
-        "user_id" => id
+      "name" => "My new board",
+      "user_id" => user_id,
     }
   end
 
@@ -71,28 +88,59 @@ module InstanceHelper
     }
   end
 
-  def create_board(id)
+  def create_board(user_id)
     Board.create({
       "name" => "My new board",
-      "user_id" => id,
+      "user_id" => user_id,
     })
   end
 
-# <----------- Column --------------->
+  # <----------- Column --------------->
 
-  def get_column_params(id)
-    { 
-        "name" => "My first column", 
-        "position" => 0, 
-        "board_id" => id 
+  def get_column_params(board_id)
+    {
+      "name" => "My first column",
+      "position" => 0,
+      "board_id" => board_id,
     }
   end
 
-  def get_invalid_column_params(id)
-    { 
-        "name" => nil, 
-        "position" => 0, 
-        "board_id" => id 
+  def get_invalid_column_params(board_id)
+    {
+      "name" => nil,
+      "position" => 0,
+      "board_id" => board_id,
     }
   end
+
+  def create_column(board_id)
+    Column.create({
+      "name" => "My first column",
+      "position" => 0,
+      "board_id" => board_id,
+    })
+  end
+
+  # <----------- Company ---------------->
+
+  def create_company
+    Company.create({
+      "name" => "Just Energy",
+      "linkedin_url" => "/company/just-energy_2/life/",
+    })
+  end
+
+  # <----------- Lead ---------------->
+  def create_lead_instance(column_id, company_id)
+    lead_params_copy = @@lead_params.clone
+    lead_params_copy['column_id'] = column_id
+    lead_params_copy['company_id'] = company_id
+    Lead.create(lead_params_copy)
+  end
+
+  def get_lead_params_copy
+    lead_params_copy = @@lead_params.clone
+  end
+
+
 end
