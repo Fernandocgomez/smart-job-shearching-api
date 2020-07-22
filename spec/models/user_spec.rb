@@ -4,7 +4,7 @@ RSpec.describe User, type: :model do
   subject {
     # This create an instance of the User model
     # requests_helper.rb
-    create_user
+    create_user_instance
   }
 
   describe "validations" do
