@@ -138,9 +138,28 @@ module InstanceHelper
     Lead.create(lead_params_copy)
   end
 
-  def get_lead_params_copy
+  def get_lead_params(column_id, company_id)
     lead_params_copy = @@lead_params.clone
+    lead_params_copy['column_id'] = column_id
+    lead_params_copy['company_id'] = company_id
+    lead_params_copy
+  end
+
+  def get_invalid_lead_params(column_id, company_id)
+    lead_params_copy = @@lead_params.clone
+    lead_params_copy['column_id'] = column_id
+    lead_params_copy['company_id'] = company_id
+    lead_params_copy['first_name'] = nil
+    lead_params_copy
   end
 
 
+
+  def get_lead_matcher(column_id, company_id)
+    lead_params_copy = @@lead_params.clone
+    lead_params_copy['id'] = nil
+    lead_params_copy['column_id'] = column_id
+    lead_params_copy['company_id'] = company_id
+    lead_params_copy
+  end
 end

@@ -64,9 +64,7 @@ RSpec.describe Lead, type: :model do
             expect(subject).to_not be_valid
         end
         it 'must have a default value' do
-            params = get_lead_params_copy
-            params['column_id'] = @column.id
-            params['company_id'] = @company.id
+            params = get_lead_params(@column.id, @company.id)
             params.except!("picture_url")
             lead = Lead.create(params)
             expect(lead).to be_valid
@@ -87,9 +85,7 @@ RSpec.describe Lead, type: :model do
             expect(subject).to_not be_valid
         end
         it 'must have a default value' do
-            params = get_lead_params_copy
-            params['column_id'] = @column.id
-            params['company_id'] = @company.id
+            params = get_lead_params(@column.id, @company.id)
             params.except!("status")
             lead = Lead.create(params)
             expect(lead).to be_valid
@@ -103,9 +99,7 @@ RSpec.describe Lead, type: :model do
             expect(subject).to_not be_valid
         end
         it 'must have a default value' do
-            params = get_lead_params_copy
-            params['column_id'] = @column.id
-            params['company_id'] = @company.id
+            params = get_lead_params(@column.id, @company.id)
             params.except!("notes")
             lead = Lead.create(params)
             expect(lead).to be_valid
@@ -131,9 +125,7 @@ RSpec.describe Lead, type: :model do
             expect(subject).to_not be_valid
         end
         it 'must have a default value' do
-            params = get_lead_params_copy
-            params['column_id'] = @column.id
-            params['company_id'] = @company.id
+            params = get_lead_params(@column.id, @company.id)
             params.except!("phone_number")
             lead = Lead.create(params)
             expect(lead).to be_valid

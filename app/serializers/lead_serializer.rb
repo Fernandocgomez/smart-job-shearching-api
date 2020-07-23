@@ -1,3 +1,3 @@
 class LeadSerializer < ActiveModel::Serializer
-  attributes :id
+  attributes :id, :first_name, :last_name, :picture_url, :linkedin_url, :status, :notes, :email, :phone_number, :column_id, :company_id
 end

@@ -1,19 +1,17 @@
 Rails.application.routes.draw do
 
-  get 'leads/new'
-  get 'leads/index'
-  get 'leads/create'
-  get 'leads/show'
-  get 'leads/edit'
-  get 'leads/update'
-  get 'leads/destroy'
+  post 'leads' => 'leads#create'
+  get 'lead/:id' => 'leads#show'
+  put 'lead/:id' => 'leads#update'
+  delete 'lead/:id' => 'leads#destroy'
+
 
   post 'columns' => 'columns#create'
   put 'column/:id' => 'columns#update'
   delete 'column/:id' => 'columns#destroy'
 
-  post '/boards' => 'boards#create'
-  get '/board/:id' => 'boards#show'
+  post 'boards' => 'boards#create'
+  get 'board/:id' => 'boards#show'
   put 'board/:id' => 'boards#update'
   delete 'board/:id' => 'boards#destroy'
 
