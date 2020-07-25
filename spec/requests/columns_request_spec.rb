@@ -7,7 +7,7 @@ RSpec.describe "Columns", type: :request do
     @user = create_user
     @board = create_board(@user.id)
     @params = get_column_params(@board.id)
-    @invalid_params = get_invalid_column_params(@board.id)
+    @invalid_params = get_invalid_column_params(@board.id, nil)
     @matcher = { "id" => nil, "name" => "My first column", "position" => 0, "board_id" => @board.id }
   end
 
