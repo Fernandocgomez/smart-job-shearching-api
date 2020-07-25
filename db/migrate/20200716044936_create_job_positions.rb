@@ -2,6 +2,7 @@ class CreateJobPositions < ActiveRecord::Migration[6.0]
   def change
     create_table :job_positions do |t|
       t.string :name, null: false
+      t.text :description, default: "job description should be here", null: false
       t.string :city, null: false
       t.string :state, null: false
       t.boolean :applied, default: false, null: false

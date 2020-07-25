@@ -1,4 +1,7 @@
 module InstanceHelper
+
+  # <----------- User --------------->
+
   @@user_params = {
     "username" => "fernandocgomez",
     "email" => "fernandocgomez@live.com",
@@ -33,27 +36,8 @@ module InstanceHelper
     "zipcode" => "77047",
   }
 
-  @@lead_params = {
-    "first_name" => "Andrew",
-    "last_name" => "Sprague", 
-    "picture_url" => "https://media-exp1.licdn.com/dms/image/C5603AQE56P4YUjdGiw/profile-displayphoto-shrink_100_100/0?e=1599696000&v=beta&t=ZI3-yK0vAH9NH-XSH5Xq70G0nKsdBUHhAjeYEqd1w8s", 
-    "linkedin_url" => "/in/andrew-sprague-cfa/", 
-    "status" => "new", 
-    "notes" => "write a note...", 
-    "email" => "asprague@outlook.com",
-    "phone_number" => "3462600832", 
-    "column_id" => nil,
-    "company_id" => nil
-  }
-
-  # <----------- User --------------->
-
   def create_user
     User.create(@@user_params)
-  end
-
-  def create_user_instance
-    User.new(@@user_params)
   end
 
   def create_user_without_validations
@@ -74,63 +58,83 @@ module InstanceHelper
 
   # <----------- Board --------------->
 
+  @@board_params = {
+    "name" => "My new board",
+    "user_id" => nil,
+  }
+
   def get_board_params(user_id)
-    {
-      "name" => "My new board",
-      "user_id" => user_id,
-    }
+    board_params = @@board_params.clone
+    board_params['user_id'] = user_id
+    board_params
   end
 
   def get_board_invalid_params
-    {
-      "name" => "My new board",
-      "user_id" => nil,
-    }
+    board_params = @@board_params.clone
+    board_params
   end
 
   def create_board(user_id)
-    Board.create({
-      "name" => "My new board",
-      "user_id" => user_id,
-    })
+    board_params = @@board_params.clone
+    board_params['user_id'] = user_id
+    Board.create(board_params)
   end
 
   # <----------- Column --------------->
 
+  @@column_params = {
+    "name" => "My first column",
+    "position" => 0,
+    "board_id" => nil
+  }
+
   def get_column_params(board_id)
-    {
-      "name" => "My first column",
-      "position" => 0,
-      "board_id" => board_id,
-    }
+    column_params = @@column_params.clone
+    column_params['board_id'] = board_id
+    column_params
   end
 
-  def get_invalid_column_params(board_id)
-    {
-      "name" => nil,
-      "position" => 0,
-      "board_id" => board_id,
-    }
+  def get_invalid_column_params(board_id, invalid_param)
+    column_params = @@column_params.clone
+    column_params['name'] = invalid_param
+    column_params['board_id'] = board_id
+    column_params
   end
 
   def create_column(board_id)
-    Column.create({
-      "name" => "My first column",
-      "position" => 0,
-      "board_id" => board_id,
-    })
+    column_params = @@column_params.clone
+    column_params['board_id'] = board_id
+    Column.create(column_params)
   end
 
   # <----------- Company ---------------->
 
+  @@company_params = {
+    "name" => "Just Energy",
+    "linkedin_url" => "/company/just-energy_2/life/",
+    "website" => "wwww.companyxwy.com",
+    "about" => "about the company"
+  }
+
   def create_company
-    Company.create({
-      "name" => "Just Energy",
-      "linkedin_url" => "/company/just-energy_2/life/",
-    })
+    Company.create(@@company_params)
   end
 
   # <----------- Lead ---------------->
+
+  @@lead_params = {
+    "first_name" => "Andrew",
+    "last_name" => "Sprague", 
+    "picture_url" => "https://media-exp1.licdn.com/dms/image/C5603AQE56P4YUjdGiw/profile-displayphoto-shrink_100_100/0?e=1599696000&v=beta&t=ZI3-yK0vAH9NH-XSH5Xq70G0nKsdBUHhAjeYEqd1w8s", 
+    "linkedin_url" => "/in/andrew-sprague-cfa/", 
+    "status" => "new", 
+    "notes" => "write a note...", 
+    "email" => "asprague@outlook.com",
+    "phone_number" => "3462600832", 
+    "column_id" => nil,
+    "company_id" => nil
+  }
+
   def create_lead_instance(column_id, company_id)
     lead_params_copy = @@lead_params.clone
     lead_params_copy['column_id'] = column_id
@@ -162,4 +166,68 @@ module InstanceHelper
     lead_params_copy['company_id'] = company_id
     lead_params_copy
   end
+
+
+  # <----------- JobPosition ---------------->
+
+  @@job_position_params = {
+    "name" => "Front End Developer", 
+    "description" => "Kettle is seeking a front-end developer with a passion for solving problems and making creative concepts a reality through clean, maintainable code. The client you’d be working alongside has been celebrated for its iconic design and groundbreaking engineering. And in the dev community they’re known for a meticulous approach to code that’s so pure, it’s considered an art in and of itself.
+
+    We’d Like To Know That You Can
+    
+    3+ years experience in front-end web development
+    Comprehensive knowledge of HTML, CSS, and JavaScript
+    Excellent verbal/written communication and time management skills
+    Proven debugging and troubleshooting skills
+    
+    The Right Candidate Should Also Have
+    
+    An insatiable curiosity for new techniques and a razor-sharp eye for detail
+    A love for programming from scratch with object-oriented JavaScript (DOM literacy is a must!)
+    You’re serious about your work, but don’t take yourself too seriously
+    A passion for taking part in open source projects
+    
+    Why It’s An Awesome Gig
+    
+    Make JavaScript matter. Help elevate JavaScript to the level of its more respected brethren through unit tests, headless testing, and by contributing to core libraries authored and maintained by many of the world's best engineers.
+    Take part in emerging methodologies. Author and contribute to a slew of proprietary implementations of the latest front-end development methodologies — custom-built for one of the world’s most widely-watched tech companies.
+    Lead the charge in accessibility. Be on the forefront of implementing truly accessible content at scale. And with this client, ‘at scale’ means really, really big.
+    Craft pixel-perfect, butter-smooth animations. Leverage the team's shared knowledge to exploit all the quirks of modern browsers for animations that perform consistently and beautifully.
+    Never open Photoshop again. Ever. We’re serious. And yes, it’s awesome. This client has entire teams dedicated to slicing and exporting all images before we ever begin development.
+    And build new skills day after day. Get allocated time for personal development and exploration in a highly collaborative, growth-facilitating environment — complete with manager/peer code-reviews, and exclusive dev talks and symposiums.
+    
+    Seniority Level
+    
+    Entry level
+    
+    Industry
+    Computer Software
+    Employment Type
+    
+    Part-time
+    
+    Job Functions
+    Engineering  Information Technology",
+    "city" => "Houston", 
+    "state" => "TX", 
+    "applied" => false, 
+    "user_id" => nil, 
+    "company_id" => nil
+  }
+
+  def create_job_position(user_id, company_id)
+    params = @@job_position_params.clone
+    params['user_id'] = user_id
+    params['company_id'] = company_id
+    JobPosition.create(params)
+  end
+
+  def get_job_position_params(user_id, company_id)
+    params = @@job_position_params.clone
+    params['user_id'] = user_id
+    params['company_id'] = company_id
+    params
+  end
+
 end

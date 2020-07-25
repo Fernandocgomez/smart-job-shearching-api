@@ -33,12 +33,15 @@ ActiveRecord::Schema.define(version: 2020_07_16_045054) do
   create_table "companies", force: :cascade do |t|
     t.string "name", null: false
     t.string "linkedin_url", null: false
+    t.string "website", default: "wwww.companyxwy.com"
+    t.text "about", default: "about the company"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "job_positions", force: :cascade do |t|
     t.string "name", null: false
+    t.text "description", default: "job description should be here", null: false
     t.string "city", null: false
     t.string "state", null: false
     t.boolean "applied", default: false, null: false
