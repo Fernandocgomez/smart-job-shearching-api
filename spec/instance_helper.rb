@@ -14,28 +14,6 @@ module InstanceHelper
     "zipcode" => "77047",
   }
 
-  @@user_invalid_params = {
-    "username" => nil,
-    "email" => "fernandocgomez@live.com",
-    "password_digest" => "Ilovemytacos32%",
-    "password_digest_confirmation" => "Ilovemytacos32%",
-    "first_name" => "Fernando",
-    "last_name" => "Gomez",
-    "city" => "Houston",
-    "state" => "Tx",
-    "zipcode" => "77047",
-  }
-
-  @@user_matcher = {
-    "username" => "fernandocgomez",
-    "email" => "fernandocgomez@live.com",
-    "first_name" => "Fernando",
-    "last_name" => "Gomez",
-    "city" => "Houston",
-    "state" => "Tx",
-    "zipcode" => "77047",
-  }
-
   def create_user
     User.create(@@user_params)
   end
@@ -49,11 +27,20 @@ module InstanceHelper
   end
 
   def get_user_matcher
-    @@user_matcher
+    matcher = @@user_params.clone
+    matcher.except!("password_digest")
+    matcher.except!("password_digest_confirmation")
+    matcher
   end
 
-  def get_user_invalid_params
-    @@user_invalid_params
+  def get_user_invalid_params(invalid_param)
+    params = @@user_params.clone
+    params['username'] = invalid_param
+    params
+  end
+
+  def self.seed_get_user_params
+    @@user_params
   end
 
   # <----------- Board --------------->
@@ -64,20 +51,26 @@ module InstanceHelper
   }
 
   def get_board_params(user_id)
-    board_params = @@board_params.clone
-    board_params['user_id'] = user_id
-    board_params
+    params = @@board_params.clone
+    params['user_id'] = user_id
+    params
   end
 
   def get_board_invalid_params
-    board_params = @@board_params.clone
-    board_params
+    params = @@board_params.clone
+    params
   end
 
   def create_board(user_id)
-    board_params = @@board_params.clone
-    board_params['user_id'] = user_id
-    Board.create(board_params)
+    params = @@board_params.clone
+    params['user_id'] = user_id
+    Board.create(params)
+  end
+
+  def self.seed_get_board_params(user_id)
+    params = @@board_params.clone
+    params['user_id'] = user_id
+    params
   end
 
   # <----------- Column --------------->
@@ -89,22 +82,28 @@ module InstanceHelper
   }
 
   def get_column_params(board_id)
-    column_params = @@column_params.clone
-    column_params['board_id'] = board_id
-    column_params
+    params = @@column_params.clone
+    params['board_id'] = board_id
+    params
   end
 
   def get_invalid_column_params(board_id, invalid_param)
-    column_params = @@column_params.clone
-    column_params['name'] = invalid_param
-    column_params['board_id'] = board_id
-    column_params
+    params = @@column_params.clone
+    params['name'] = invalid_param
+    params['board_id'] = board_id
+    params
   end
 
   def create_column(board_id)
-    column_params = @@column_params.clone
-    column_params['board_id'] = board_id
-    Column.create(column_params)
+    params = @@column_params.clone
+    params['board_id'] = board_id
+    Column.create(params)
+  end
+
+  def self.seed_get_column_params(board_id)
+    params = @@column_params.clone
+    params['board_id'] = board_id
+    params
   end
 
   # <----------- Company ---------------->
@@ -118,6 +117,11 @@ module InstanceHelper
 
   def create_company
     Company.create(@@company_params)
+  end
+
+  def self.seed_get_company_params
+    params = @@company_params.clone
+    params
   end
 
   # <----------- Lead ---------------->
@@ -136,35 +140,40 @@ module InstanceHelper
   }
 
   def create_lead_instance(column_id, company_id)
-    lead_params_copy = @@lead_params.clone
-    lead_params_copy['column_id'] = column_id
-    lead_params_copy['company_id'] = company_id
-    Lead.create(lead_params_copy)
+    params = @@lead_params.clone
+    params['column_id'] = column_id
+    params['company_id'] = company_id
+    Lead.create(params)
   end
 
   def get_lead_params(column_id, company_id)
-    lead_params_copy = @@lead_params.clone
-    lead_params_copy['column_id'] = column_id
-    lead_params_copy['company_id'] = company_id
-    lead_params_copy
+    params = @@lead_params.clone
+    params['column_id'] = column_id
+    params['company_id'] = company_id
+    params
   end
 
   def get_invalid_lead_params(column_id, company_id)
-    lead_params_copy = @@lead_params.clone
-    lead_params_copy['column_id'] = column_id
-    lead_params_copy['company_id'] = company_id
-    lead_params_copy['first_name'] = nil
-    lead_params_copy
+    params = @@lead_params.clone
+    params['column_id'] = column_id
+    params['company_id'] = company_id
+    params['first_name'] = nil
+    params
   end
 
-
-
   def get_lead_matcher(column_id, company_id)
-    lead_params_copy = @@lead_params.clone
-    lead_params_copy['id'] = nil
-    lead_params_copy['column_id'] = column_id
-    lead_params_copy['company_id'] = company_id
-    lead_params_copy
+    params = @@lead_params.clone
+    params['id'] = nil
+    params['column_id'] = column_id
+    params['company_id'] = company_id
+    params
+  end
+
+  def self.seed_get_lead_params(column_id, company_id)
+    params = @@lead_params.clone
+    params['column_id'] = column_id
+    params['company_id'] = company_id
+    params
   end
 
 
@@ -230,4 +239,27 @@ module InstanceHelper
     params
   end
 
+  def get_job_position_invalid_params(user_id, company_id, invalid_state)
+    params = @@job_position_params.clone
+    params['user_id'] = user_id
+    params['company_id'] = company_id
+    params['state'] = invalid_state
+    params
+  end
+
+  def get_job_position_matcher(user_id, company_id, job_position_id)
+    params = @@job_position_params.clone
+    params['user_id'] = user_id
+    params['company_id'] = company_id
+    params['user_id'] = user_id
+    params['id'] = job_position_id
+    params
+  end
+
+  def self.seed_get_job_position_params(user_id, company_id)
+    params = @@job_position_params.clone
+    params['user_id'] = user_id
+    params['company_id'] = company_id
+    params
+  end
 end
