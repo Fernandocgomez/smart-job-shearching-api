@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
 
+  post 'job_positions' => 'job_position#create'
+  get 'job_position/:id' => 'job_position#show'
+  put 'job_position/:id' => 'job_position#update'
+  delete 'job_position/:id' => 'job_position#destroy'
+
   post 'leads' => 'leads#create'
   get 'lead/:id' => 'leads#show'
   put 'lead/:id' => 'leads#update'

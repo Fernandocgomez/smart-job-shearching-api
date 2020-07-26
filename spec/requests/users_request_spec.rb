@@ -6,7 +6,7 @@ RSpec.describe "Users", type: :request do
     # requests_helper.rb
     @params = get_user_params
     @matcher = get_user_matcher
-    @invalid_params = get_user_invalid_params
+    @invalid_params = get_user_invalid_params(nil)
   end
 
   describe "POST /users" do
