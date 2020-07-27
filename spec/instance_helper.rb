@@ -139,7 +139,7 @@ module InstanceHelper
     "company_id" => nil
   }
 
-  def create_lead_instance(column_id, company_id)
+  def create_lead(column_id, company_id)
     params = @@lead_params.clone
     params['column_id'] = column_id
     params['company_id'] = company_id
@@ -262,4 +262,43 @@ module InstanceHelper
     params['company_id'] = company_id
     params
   end
+
+  # <----------- LeadEmail ---------------->
+
+  @@lead_email_params = {
+    "email" => "example@example.com", 
+    "subject" => "1st Software Engineer Position",
+    "email_body" => "Hello, I am contacting you regarding to the front end position", 
+    "sent" => false, 
+    "open" => false,
+    "lead_id" => nil,
+    "job_position_id" => nil
+  }
+
+  def create_lead_email(lead_id, job_position_id)
+    params = @@lead_email_params.clone
+    params['lead_id'] = lead_id
+    params['job_position_id'] = job_position_id
+    LeadEmail.create(params)
+  end
+
+  def get_lead_email_params(lead_id, job_position_id)
+    params = @@lead_email_params.clone
+    params['lead_id'] = lead_id
+    params['job_position_id'] = job_position_id
+    params
+  end
+
+  def lead_email_check_default_value(get_params, value)
+    params = get_params.except!(value)
+    LeadEmail.create(params)
+  end
+
+  def self.seed_get_lead_email_params(lead_id, job_position_id)
+    params = @@lead_email_params.clone
+    params['lead_id'] = lead_id
+    params['job_position_id'] = job_position_id
+    params
+  end
+
 end

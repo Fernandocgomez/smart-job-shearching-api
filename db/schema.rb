@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 2020_07_16_045054) do
   create_table "lead_emails", force: :cascade do |t|
     t.string "email", default: "example@example.com", null: false
     t.string "subject", default: "write an eye catching email subject", null: false
-    t.string "email_body", default: "compost an email...", null: false
+    t.text "email_body", default: "compost an email...", null: false
     t.boolean "sent", default: false, null: false
     t.boolean "open", default: false, null: false
     t.integer "lead_id", null: false
