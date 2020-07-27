@@ -10,7 +10,7 @@ RSpec.describe Lead, type: :model do
     subject {
         # This create an instance of the Lead model
         # requests_helper.rb
-        create_lead_instance(@column.id, @company.id)
+        create_lead(@column.id, @company.id)
     }
     describe 'Validations' do
       describe 'first_name' do
