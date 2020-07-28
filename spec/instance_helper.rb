@@ -289,6 +289,22 @@ module InstanceHelper
     params
   end
 
+  def get_lead_email_invalid_params(lead_id, job_position_id)
+    params = @@lead_email_params.clone
+    params['lead_id'] = lead_id
+    params['job_position_id'] = job_position_id
+    params["email"] = "example@examplecom" 
+    params
+  end
+
+  def get_lead_email_matcher(lead_id, job_position_id, lead_email_id)
+    params = @@lead_email_params.clone
+    params['lead_id'] = lead_id
+    params['job_position_id'] = job_position_id
+    params['id'] = lead_email_id
+    params
+  end
+
   def lead_email_check_default_value(get_params, value)
     params = get_params.except!(value)
     LeadEmail.create(params)

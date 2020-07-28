@@ -1,5 +1,10 @@
 Rails.application.routes.draw do
 
+  post 'lead_emails' => 'lead_emails#create'
+  get 'lead_email/:id' => 'lead_emails#show'
+  put 'lead_email/:id' => 'lead_emails#update'
+  delete 'lead_email/:id' => 'lead_emails#destroy'
+
   post 'job_positions' => 'job_position#create'
   get 'job_position/:id' => 'job_position#show'
   put 'job_position/:id' => 'job_position#update'
