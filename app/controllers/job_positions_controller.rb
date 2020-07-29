@@ -1,4 +1,4 @@
-class JobPositionController < ApplicationController
+class JobPositionsController < ApplicationController
 
   def create
     job_position = JobPosition.new(job_position_params)
