@@ -119,6 +119,11 @@ module InstanceHelper
     Company.create(@@company_params)
   end
 
+  def get_company_params
+    params = @@company_params.clone
+    params
+  end
+
   def self.seed_get_company_params
     params = @@company_params.clone
     params
