@@ -119,6 +119,12 @@ RSpec.describe "Columns", type: :request do
 
         expect(resp_json["resp"]).to eql("column has been deleted")
       end
+      it "destroy record from the DB" do
+        db_size = Column.all.size
+        delete "/column/#{@column_resp["resp"]["id"]}"
+
+        expect(Column.all.size).to eq(db_size - 1)
+      end
     end
     context "request fails" do
       it "returns a 404 status" do

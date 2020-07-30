@@ -143,6 +143,12 @@ RSpec.describe "JobPositions", type: :request do
 
         expect(resp_json["resp"]).to eq("job position has been deleted")
       end
+      it "destroy record from the DB" do
+        db_size = JobPosition.all.size
+        delete "/job_position/#{@job_position["resp"]["id"]}"
+
+        expect(JobPosition.all.size).to eq(db_size - 1)
+      end
     end
     context "request fails" do
       it "returns a 404 status" do
