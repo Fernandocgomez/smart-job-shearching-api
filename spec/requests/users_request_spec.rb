@@ -135,6 +135,12 @@ RSpec.describe "Users", type: :request do
 
         expect(resp_json["resp"]).to eq("user has been deleted")
       end
+      it "destroy record from the DB" do
+        db_size = User.all.size
+        delete "/user/#{@params["resp"]["id"]}"
+
+        expect(User.all.size).to eq(db_size - 1)
+      end
     end
     context "request fails" do
       it "returns a 404 status" do

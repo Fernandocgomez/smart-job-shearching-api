@@ -147,6 +147,12 @@ RSpec.describe "LeadEmails", type: :request do
 
         expect(resp_json["resp"]).to eq("lead email has been deleted")
       end
+      it "destroy record from the DB" do
+        db_size = LeadEmail.all.size
+        delete "/lead_email/#{@resp_lead_email["resp"]["id"]}"
+
+        expect(LeadEmail.all.size).to eq(db_size - 1)
+      end
     end
     context "request fails" do
       it "returns a 404 status" do

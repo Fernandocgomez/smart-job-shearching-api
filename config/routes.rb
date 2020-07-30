@@ -1,5 +1,12 @@
 Rails.application.routes.draw do
 
+  post 'companies' => 'companies#create'
+  get '/company/:id' => 'companies#show'
+  put '/company/:id' => 'companies#update'
+  delete '/company/:id' => 'companies#destroy'
+
+
+
   post 'lead_emails' => 'lead_emails#create'
   get 'lead_email/:id' => 'lead_emails#show'
   put 'lead_email/:id' => 'lead_emails#update'
