@@ -1,4 +1,4 @@
-class LeadEmailsController < ApplicationController
+class Api::LeadEmailsController < ApplicationController
   def create
     lead_email = LeadEmail.new(lead_email_params)
     if lead_email.valid?

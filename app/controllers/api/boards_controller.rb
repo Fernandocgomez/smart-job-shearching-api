@@ -1,4 +1,4 @@
-class BoardsController < ApplicationController
+class Api::BoardsController < ApplicationController
   def create
     board = Board.new(board_params)
     if board.valid?
