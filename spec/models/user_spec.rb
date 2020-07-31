@@ -64,59 +64,59 @@ RSpec.describe User, type: :model do
       end
     end
 
-    describe "password_digest" do
+    describe "password" do
       it "must be presence" do
         expect(subject).to be_valid
-        subject.password_digest = nil
+        subject.password = nil
         expect(subject).to_not be_valid
       end
 
       it "must be at least 8 characters" do
         expect(subject).to be_valid
-        subject.password_digest = "Ilovfe"
+        subject.password = "Ilovfe"
         expect(subject).to_not be_valid
       end
       it "must be a maximum of 25 characters" do
         expect(subject).to be_valid
-        subject.password_digest = "Ilovemytacos32%ferferferferferferferferferfer"
+        subject.password = "Ilovemytacos32%ferferferferferferferferferfer"
         expect(subject).to_not be_valid
       end
 
       it "must contain at least one special character" do
         expect(subject).to be_valid
-        subject.password_digest = "Ilovemytacos32"
+        subject.password = "Ilovemytacos32"
         expect(subject).to_not be_valid
       end
 
       it "must contain at least one lowercase letter" do
         expect(subject).to be_valid
-        subject.password_digest = "ILOVEMYTACOS32%"
+        subject.password = "ILOVEMYTACOS32%"
         expect(subject).to_not be_valid
       end
 
       it "must contain at least one uppercase letter" do
         expect(subject).to be_valid
-        subject.password_digest = "ilovemytacos32%"
+        subject.password = "ilovemytacos32%"
         expect(subject).to_not be_valid
       end
 
       it "must contain at least one digit" do
         expect(subject).to be_valid
-        subject.password_digest = "Ilovemytacos%"
+        subject.password = "Ilovemytacos%"
         expect(subject).to_not be_valid
       end
     end
 
-    describe "password_digest_confirmation" do
+    describe "password_confirmation" do
       it "must be presence" do
         expect(subject).to be_valid
-        subject.password_digest_confirmation = nil
+        subject.password_confirmation = nil
         expect(subject).to_not be_valid
       end
 
-      it "must match with password_digest" do
+      it "must match with password" do
         expect(subject).to be_valid
-        subject.password_digest_confirmation = "Differentpassword%"
+        subject.password_confirmation = "Differentpassword%"
         expect(subject).to_not be_valid
       end
     end

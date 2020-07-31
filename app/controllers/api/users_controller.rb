@@ -48,8 +48,8 @@ class Api::UsersController < ApplicationController
     params.permit(
       :username,
       :email,
-      :password_digest,
-      :password_digest_confirmation,
+      :password,
+      :password_confirmation,
       :first_name,
       :last_name,
       :city,

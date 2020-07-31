@@ -72,13 +72,15 @@ RSpec.describe "Users", type: :request do
       end
     end
   end
+
   describe "PUT /api/user/:id" do
     before(:each) do
       post "/api/users", params: @params
       @params = JSON.parse(response.body)
-      @update_params = { "username" => "Cristobal", "password_digest_confirmation" => "Ilovemytacos32%" }
-      @update_invalid_params = { "username" => nil, "password_digest_confirmation" => "Ilovemytacos32%" }
+      @update_params = { "username" => "Cristobal", "password" => "Ilovemytacos32%", "password_confirmation" => "Ilovemytacos32%" }
+      @update_invalid_params = { "username" => nil, "password" => "Ilovemytacos32%", "password_confirmation" => "Ilovemytacos32%" }
     end
+
     context "request is successful" do
       it "returns a 200 status" do
         put "/api/user/#{@params["resp"]["id"]}", params: @update_params
@@ -92,6 +94,7 @@ RSpec.describe "Users", type: :request do
         expect(resp_json["resp"]["username"]).to match(@update_params["username"])
       end
     end
+
     context "request fails(invalid paramas)" do
       it "returns a 400 status" do
         put "/api/user/#{@params["resp"]["id"]}", params: @update_invalid_params
