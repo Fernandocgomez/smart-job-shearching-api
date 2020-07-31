@@ -5,8 +5,8 @@ module InstanceHelper
   @@user_params = {
     "username" => "fernandocgomez",
     "email" => "fernandocgomez@live.com",
-    "password_digest" => "Ilovemytacos32%",
-    "password_digest_confirmation" => "Ilovemytacos32%",
+    "password" => "Ilovemytacos32%",
+    "password_confirmation" => "Ilovemytacos32%",
     "first_name" => "Fernando",
     "last_name" => "Gomez",
     "city" => "Houston",
@@ -28,8 +28,8 @@ module InstanceHelper
 
   def get_user_matcher
     matcher = @@user_params.clone
-    matcher.except!("password_digest")
-    matcher.except!("password_digest_confirmation")
+    matcher.except!("password")
+    matcher.except!("password_confirmation")
     matcher
   end
 

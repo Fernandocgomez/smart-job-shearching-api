@@ -11,7 +11,7 @@ class User < ApplicationRecord
   validates_associated :job_positions 
 
   # Global validations
-  validates :username, :email, :password_digest, :password_digest_confirmation, :first_name, :last_name, :city, :state, :zipcode, { 
+  validates :username, :email, :password, :password_confirmation, :first_name, :last_name, :city, :state, :zipcode, { 
     presence: true 
   }
 
@@ -29,14 +29,14 @@ class User < ApplicationRecord
             }
 
   # password_digest validations
-  validates :password_digest, {
+  validates :password, {
               confirmation: true,
               length: { within: 8..25 },
             }
-  validates :password_digest, { format: { with: /[a-z]+/, message: "must contain at least one lowercase letter" } }
-  validates :password_digest, { format: { with: /[A-Z]+/, message: "must contain at least one uppercase letter" } }
-  validates :password_digest, { format: { with: /\d+/, message: "must contain at least one digit" } }
-  validates :password_digest, { format: { with: /[^A-Za-z0-9]+/, message: "must contain at least one special character" } }
+  validates :password, { format: { with: /[a-z]+/, message: "must contain at least one lowercase letter" } }
+  validates :password, { format: { with: /[A-Z]+/, message: "must contain at least one uppercase letter" } }
+  validates :password, { format: { with: /\d+/, message: "must contain at least one digit" } }
+  validates :password, { format: { with: /[^A-Za-z0-9]+/, message: "must contain at least one special character" } }
 
   # first_name & last_name validations
   validates :first_name, :last_name, {
