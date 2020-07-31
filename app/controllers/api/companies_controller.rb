@@ -1,4 +1,4 @@
-class CompaniesController < ApplicationController
+class Api::CompaniesController < ApplicationController
   def create
     company = Company.new(company_params)
     if company.valid?

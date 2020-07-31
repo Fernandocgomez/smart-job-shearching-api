@@ -1,4 +1,4 @@
-class ColumnsController < ApplicationController
+class Api::ColumnsController < ApplicationController
   def create
     column = Column.new(column_params)
     if column.valid?
