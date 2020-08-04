@@ -1,5 +1,6 @@
 module InstanceHelper
 
+
   # <----------- User --------------->
 
   @@user_params = {
@@ -41,6 +42,10 @@ module InstanceHelper
 
   def self.seed_get_user_params
     @@user_params
+  end
+
+  def encode_token(playload)
+    JWT.encode(playload, "jobhunting", "HS256")
   end
 
   # <----------- Board --------------->
