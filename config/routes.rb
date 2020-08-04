@@ -33,5 +33,7 @@ Rails.application.routes.draw do
     get "user/:id" => "users#show"
     put "user/:id" => "users#update"
     delete "user/:id" => "users#destroy"
+
+    post 'login' => "auth#login"
   end
 end
