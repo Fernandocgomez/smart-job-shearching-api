@@ -35,12 +35,13 @@ module ControllerHelper
         params
     end
 
+    # <----------- Auth --------------->
+
     def get_auth_token(user_id)
         token =  JWT.encode({user_id: user_id}, "jobhunting", "HS256")
         {"Authorization" => "Bearer " + token}
     end
 
-
-
     
+
 end
