@@ -1,5 +1,7 @@
 class Api::AuthController < ApplicationController
 
+  skip_before_action :authorized, only: [:login]
+
   def login
     user = User.find_by(username: params[:username])
     if user 
