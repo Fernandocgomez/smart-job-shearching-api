@@ -1,18 +1,10 @@
-module ControllerHelper 
+require_relative 'params_helper'
+module ControllerHelper
+    extend ParamsHelper 
 
     # <----------- User --------------->
 
-    @@user_params = {
-        "username" => "fernandocgomez",
-        "email" => "fernandocgomez@live.com",
-        "password" => "Ilovemytacos32%",
-        "password_confirmation" => "Ilovemytacos32%",
-        "first_name" => "Fernando",
-        "last_name" => "Gomez",
-        "city" => "Houston",
-        "state" => "Tx",
-        "zipcode" => "77047",
-    }
+    @@user_params = ParamsHelper.get_user_params
 
     def get_user_params(type)
         params = @@user_params.clone
