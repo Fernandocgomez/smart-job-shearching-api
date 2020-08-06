@@ -2,8 +2,6 @@ require "rails_helper"
 
 RSpec.describe User, type: :model do
   subject {
-    # This create an instance of the User model
-    # requests_helper.rb
     create_user
   }
 
@@ -16,10 +14,7 @@ RSpec.describe User, type: :model do
       end
 
       it "must be unique" do
-        # This create an instance of the User model without validations (create!)
-        # requests_helper.rb
         create_user_without_validations
-
         expect(subject).to_not be_valid
       end
 
@@ -29,13 +24,13 @@ RSpec.describe User, type: :model do
         expect(subject).to_not be_valid
       end
 
-      it 'must be a maximum of 20 characters' do
+      it "must be a maximum of 20 characters" do
         expect(subject).to be_valid
         subject.username = "fernandomasonetwothreefourfivesix"
         expect(subject).to_not be_valid
       end
 
-      it 'must be only upper and lower cases' do
+      it "must be only upper and lower cases" do
         expect(subject).to be_valid
         subject.username = "fernandoc gomez"
         expect(subject).to_not be_valid
@@ -50,8 +45,6 @@ RSpec.describe User, type: :model do
       end
 
       it "must be unique" do
-        # This create an instance of the User model without validations (create!)
-        # requests_helper.rb
         create_user_without_validations
 
         expect(subject).to_not be_valid
@@ -128,12 +121,11 @@ RSpec.describe User, type: :model do
         expect(subject).to_not be_valid
       end
 
-      it 'must have a default value' do
-        params = get_user_params.clone
-        params.except!("first_name")
-        user = User.create(params)
+      it "must have a default value" do
+        user = check_default_value(User, ParamsHelper.get_user_params, "first_name")
+
         expect(user).to be_valid
-        expect(user['first_name']).to eql("default")
+        expect(user["first_name"]).to eql("default")
       end
 
       it "must be only upper and lower cases" do
@@ -142,11 +134,15 @@ RSpec.describe User, type: :model do
         expect(subject).to_not be_valid
       end
 
-      it "must be at least 2 characters and not larger than 15" do
+      it "must be minimun 2 characters" do
+        expect(subject).to be_valid
+        subject.first_name = "F"
+        expect(subject).to_not be_valid
+      end
+
+      it "must be minimun 15 characters" do
         expect(subject).to be_valid
         subject.first_name = "Fernandoferferferferferferferfer"
-        expect(subject).to_not be_valid
-        subject.first_name = "F"
         expect(subject).to_not be_valid
       end
     end
@@ -158,12 +154,10 @@ RSpec.describe User, type: :model do
         expect(subject).to_not be_valid
       end
 
-      it 'must have a default value' do
-        params = get_user_params.clone
-        params.except!("last_name")
-        user = User.create(params)
+      it "must have a default value" do
+        user = check_default_value(User, ParamsHelper.get_user_params, "last_name")
         expect(user).to be_valid
-        expect(user['last_name']).to eql("default")
+        expect(user["last_name"]).to eql("default")
       end
 
       it "must be only upper and lower cases" do
@@ -172,11 +166,15 @@ RSpec.describe User, type: :model do
         expect(subject).to_not be_valid
       end
 
-      it "must be at least 2 characters and not larger than 15" do
+      it "must be minimun 2 characters" do
+        expect(subject).to be_valid
+        subject.last_name = "G"
+        expect(subject).to_not be_valid
+      end
+
+      it "must be minimun 15 characters" do
         expect(subject).to be_valid
         subject.last_name = "Gomezferferferferferferferfer"
-        expect(subject).to_not be_valid
-        subject.last_name = "G"
         expect(subject).to_not be_valid
       end
     end
@@ -187,12 +185,10 @@ RSpec.describe User, type: :model do
         subject.city = nil
         expect(subject).to_not be_valid
       end
-      it 'must have a default value' do
-        params = get_user_params.clone
-        params.except!("city")
-        user = User.create(params)
+      it "must have a default value" do
+        user = check_default_value(User, ParamsHelper.get_user_params, "city")
         expect(user).to be_valid
-        expect(user['city']).to eql("default")
+        expect(user["city"]).to eql("default")
       end
     end
 
@@ -202,12 +198,10 @@ RSpec.describe User, type: :model do
         subject.state = nil
         expect(subject).to_not be_valid
       end
-      it 'must have a default value' do
-        params = get_user_params.clone
-        params.except!("state")
-        user = User.create(params)
+      it "must have a default value" do
+        user = check_default_value(User, ParamsHelper.get_user_params, "state")
         expect(user).to be_valid
-        expect(user['state']).to eql("default")
+        expect(user["state"]).to eql("default")
       end
     end
 
@@ -224,17 +218,16 @@ RSpec.describe User, type: :model do
         expect(subject).to_not be_valid
       end
 
-      it 'must be only numbers' do
+      it "must be only numbers" do
         expect(subject).to be_valid
         subject.zipcode = "7704f"
         expect(subject).to_not be_valid
       end
 
-      it 'must be a valid USA zipcode' do
-        # we need to research libraries that can help us to acomplish this validation 
+      it "must be a valid USA zipcode" do
+        # we need to research libraries that can help us to acomplish this validation
         # https://github.com/dgilperez/validates_zipcode
       end
-
     end
   end
 end
