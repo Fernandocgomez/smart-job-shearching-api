@@ -2,6 +2,19 @@ require_relative 'params_helper'
 module ControllerHelper
     extend ParamsHelper 
 
+    # <----------- Global --------------->
+
+    def parse_resp_on_json(response)
+        JSON.parse(response.body)["resp"]
+    end
+
+    # <----------- Auth --------------->
+
+    def get_auth_token(user_id)
+        token =  JWT.encode({user_id: user_id}, "jobhunting", "HS256")
+        {"Authorization" => "Bearer " + token}
+    end
+
     # <----------- User --------------->
 
     @@user_params = ParamsHelper.get_user_params
@@ -15,7 +28,7 @@ module ControllerHelper
             params['username'] = nil
             return params
         else
-            return params
+            return nil
         end
     end
 
@@ -27,13 +40,30 @@ module ControllerHelper
         params
     end
 
-    # <----------- Auth --------------->
+    # <----------- Board --------------->
 
-    def get_auth_token(user_id)
-        token =  JWT.encode({user_id: user_id}, "jobhunting", "HS256")
-        {"Authorization" => "Bearer " + token}
+    @@board_params = ParamsHelper.get_board_params
+
+    def get_board_params(type, user_id)
+        params = @@board_params.clone
+        params['user_id'] = user_id
+        case type
+        when "valid"
+            return params
+        when "invalid"
+            params['name'] = nil
+            return params
+        else
+            return nil
+        end
     end
 
-    
+    def get_board_matcher(board_id, user_id)
+        matcher = @@board_params.clone
+        matcher['id'] = board_id
+        matcher['user_id'] = user_id
+        matcher
+    end
+
 
 end

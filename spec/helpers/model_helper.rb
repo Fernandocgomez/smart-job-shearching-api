@@ -24,22 +24,22 @@ module ModelHelper
 
   @@board_params = ParamsHelper.get_board_params
 
-  def get_board_params(user_id)
-    params = @@board_params.clone
-    params['user_id'] = user_id
-    params
-  end
+  # def get_board_params(user_id)
+  #   params = @@board_params.clone
+  #   params['user_id'] = user_id
+  #   params
+  # end
 
-  def get_board_invalid_params
-    params = @@board_params.clone
-    params
-  end
+  # def get_board_invalid_params
+  #   params = @@board_params.clone
+  #   params
+  # end
 
-  def create_board(user_id)
-    params = @@board_params.clone
-    params['user_id'] = user_id
-    Board.create(params)
-  end
+  # def create_board(user_id)
+  #   params = @@board_params.clone
+  #   params['user_id'] = user_id
+  #   Board.create(params)
+  # end
 
   # <----------- Column --------------->
 

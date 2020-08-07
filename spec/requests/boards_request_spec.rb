@@ -1,154 +1,190 @@
 require "rails_helper"
 RSpec.describe "Boards", type: :request do
-  before(:each) do
-    # This create an instance of the User model
-    # create_test_instances.rb
-    @user = create_user
-    @params = get_board_params(@user["id"])
-    @matcher = @params
-    @invalid_params = get_board_invalid_params
-  end
+  let(:user) { create(:user) }
+  let(:other_user) { create(:user, username: "cristobalgomez", email: "cristobal@live.com") }
+  let(:token) { get_auth_token(user.id) }
+  let(:other_user_token) { get_auth_token(other_user.id) }
+  let(:params) { get_board_params("valid", user.id) }
+  let(:invalid_params) { get_board_params("invalid", user.id) }
+  let(:other_user_id_params) { get_board_params("valid", other_user.id) }
+  let(:board) { create(:board, user_id: user.id) }
 
-  describe "POST /api/boards" do
-    context "request is succesful" do
+  describe "#create" do
+    context "when request success" do
+      before(:each) do
+        post "/api/boards", params: params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
       it "returns a 201 status" do
-        post "/api/boards", params: @params
         expect(response).to have_http_status(201)
       end
       it "returns an instance of the Board model on JSON" do
-        post "/api/boards", params: @params
-        resp_json = JSON.parse(response.body)
-        @matcher["id"] = resp_json["resp"]["id"]
+        matcher = get_board_matcher(@resp_json["id"], user.id)
 
-        expect(resp_json["resp"]).to match(@matcher)
+        expect(@resp_json).to match(matcher)
       end
       it "saves the instance of the Board on the DB" do
-        db_size = Board.all.size
-        post "/api/boards", params: @params
-
-        expect(Board.all.size).to eq(db_size + 1)
+        expect(Board.all.size).to eq(1)
       end
     end
-    context "request fails" do
+    context "when request fails" do
+      before(:each) do
+        post "/api/boards", params: invalid_params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
       it "returns a 400 status" do
-        post "/api/boards", params: @invalid_params
         expect(response).to have_http_status(400)
       end
       it "returns an object of errors on JSON" do
-        post "/api/boards", params: @invalid_params
-        resp_json = JSON.parse(response.body)
-
-        expect(resp_json["resp"]).to_not eq({})
+        expect(@resp_json).to include("name")
+        expect(@resp_json).to_not eq({})
+      end
+    end
+    context "when user tries to create a board not associated with him" do
+      before(:each) do
+        post "/api/boards", params: other_user_id_params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 401 status" do
+        expect(response).to have_http_status(401)
+      end
+      it "returns an error message on JSON" do
+        expect(@resp_json).to match("you can not create board that are not associated with your user without being an admin")
       end
     end
   end
-  describe "GET /api/board/:id" do
-    before(:each) do
-      post "/api/boards", params: @params
-      @board_resp = JSON.parse(response.body)
-    end
-    context "request is successful" do
+
+  describe "#show" do
+    context "when request is successful" do
+      before(:each) do
+        get "/api/board/#{board.id}", headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
       it "returns a 200 status" do
-        get "/api/board/#{@board_resp["resp"]["id"]}"
         expect(response).to have_http_status(200)
       end
       it "returns an instance of the Board model on JSON basedon the id provided" do
-        get "/api/board/#{@board_resp["resp"]["id"]}"
-        resp_json = JSON.parse(response.body)
-
-        expect(resp_json["resp"]).to match(@board_resp["resp"])
+        expect(@resp_json).to match(get_board_matcher(board.id, user.id))
       end
     end
-    context "request fails" do
-      it "returns a 400 status" do
-        get "/api/board/#{@board_resp["resp"]["id"] + 1}"
-        expect(response).to have_http_status(400)
+    context "when request fails" do
+      before(:each) do
+        get "/api/board/#{board.id + 1}", headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 404 status" do
+        expect(response).to have_http_status(404)
       end
       it "returns an error message on JSON" do
-        get "/api/board/#{@board_resp["resp"]["id"] + 1}"
-        resp_json = JSON.parse(response.body)
-        expect(resp_json["resp"]).to eq("board can't be found")
+        expect(@resp_json).to eq("board can't be found")
+      end
+    end
+    context "when user tries to access other user board" do
+      before(:each) do
+        get "/api/board/#{board.id}", headers: other_user_token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 401 status" do
+        expect(response).to have_http_status(401)
+      end
+      it "returns an error message on JSON" do
+        expect(@resp_json).to match("you can not access to other users' boards without being an admin")
       end
     end
   end
-  describe "PUT /api/board/:id" do
-    before(:each) do
-      post "/api/boards", params: @params
-      @board_resp = JSON.parse(response.body)
-      @update_params = { "name" => "My newest board" }
-      @update_invalid_params = { "name" => "M" }
-    end
-    context "request is succesful" do
+
+  describe "#update" do
+    let(:update_params) { { "name" => "different name" } }
+    let(:invalid_update_params) { { "name" => nil } }
+    context "when request success" do
+      before(:each) do
+        put "/api/board/#{board.id}", params: update_params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
       it "returns a 200 status" do
-        put "/api/board/#{@board_resp["resp"]["id"]}", params: @update_params
         expect(response).to have_http_status(200)
       end
       it "returns the updated instance of the Board model on JSON" do
-        put "/api/board/#{@board_resp["resp"]["id"]}", params: @update_params
-        resp_json = JSON.parse(response.body)
-
-        expect(resp_json["resp"]["name"]).to match(@update_params["name"])
+        expect(@resp_json["name"]).to match(update_params["name"])
       end
     end
-    context "request fails(invalid params)" do
+    context "when request fails(invalid params)" do
+      before(:each) do
+        put "/api/board/#{board.id}", params: invalid_update_params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
       it "returns a 400 status" do
-        put "/api/board/#{@board_resp["resp"]["id"]}", params: @update_invalid_params
         expect(response).to have_http_status(400)
       end
       it "returns an object of errors on JSON" do
-        put "/api/board/#{@board_resp["resp"]["id"]}", params: @update_invalid_params
-        resp_json = JSON.parse(response.body)
-
-        expect(resp_json["resp"]).to_not eq({})
+        expect(@resp_json).to include("name")
+        expect(@resp_json).to_not eq({})
       end
     end
-    context "request fails(invalid id)" do
+    context "when request fails(invalid id)" do
+      before(:each) do
+        put "/api/board/#{board.id + 1}", params: update_params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
       it "returns a 4040 status" do
-        put "/api/board/#{@board_resp["resp"]["id"] + 1}", params: @update_params
-
         expect(response).to have_http_status(404)
       end
       it "returns an error message on JSON" do
-        put "/api/board/#{@board_resp["resp"]["id"] + 1}", params: @update_params
-        resp_json = JSON.parse(response.body)
-
-        expect(resp_json["resp"]).to eq("board can't be found")
+        expect(@resp_json).to eq("board can't be found")
+      end
+    end
+    context "when user tries to edit other user board" do
+      before(:each) do
+        put "/api/board/#{board.id}", headers: other_user_token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 401 status" do
+        expect(response).to have_http_status(401)
+      end
+      it "returns an error message on JSON" do
+        expect(@resp_json).to match("you can not edit other users' boards without being an admin")
       end
     end
   end
-  describe "DELETE /api/board/:id" do
-    before(:each) do
-      post "/api/boards", params: @params
-      @board_resp = JSON.parse(response.body)
-    end
-    context "request is successful" do
+
+  describe "#destroy" do
+    context "when request is successful" do
+      before(:each) do
+        delete "/api/board/#{board.id}", headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
       it "returns a 200 status" do
-        delete "/api/board/#{@board_resp["resp"]["id"]}"
         expect(response).to have_http_status(200)
       end
       it "returns a confirmation message on JSON" do
-        delete "/api/board/#{@board_resp["resp"]["id"]}"
-        resp_json = JSON.parse(response.body)
-
-        expect(resp_json["resp"]).to eq("board has been deleted")
+        expect(@resp_json).to eq("board has been deleted")
       end
       it "destroy record from the DB" do
-        db_size = Board.all.size
-        delete "/api/board/#{@board_resp["resp"]["id"]}"
-
-        expect(Board.all.size).to eq(db_size - 1)
+        expect(Board.all.size).to eq(0)
       end
     end
-    context "request fails" do
+    context "when request fails" do
+      before(:each) do
+        delete "/api/board/#{board.id + 1}", headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
       it "returns a 404 status" do
-        delete "/api/board/#{@board_resp["resp"]["id"] + 1}"
         expect(response).to have_http_status(404)
       end
       it "returns an error message on JSON" do
-        delete "/api/board/#{@board_resp["resp"]["id"] + 1}"
-        resp_json = JSON.parse(response.body)
-
-        expect(resp_json["resp"]).to eq("board can't be found")
+        expect(@resp_json).to eq("board can't be found")
+      end
+    end
+    context "when user tries to delete other user board" do
+      before(:each) do
+        delete "/api/board/#{board.id}", headers: other_user_token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 401 status" do
+        expect(response).to have_http_status(401)
+      end
+      it "returns an error message on JSON" do
+        expect(@resp_json).to match("you can not delete other users' boards without being an admin")
       end
     end
   end

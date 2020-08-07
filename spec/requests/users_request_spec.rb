@@ -6,7 +6,7 @@ RSpec.describe "Users", type: :request do
       let(:valid_params) { get_user_params("valid") }
       before(:each) do
         post "/api/users", params: valid_params
-        @resp_json = JSON.parse(response.body)["resp"]
+        @resp_json = parse_resp_on_json(response)
       end
       it "returns a 201 status" do
         expect(response).to have_http_status(201)
@@ -24,7 +24,7 @@ RSpec.describe "Users", type: :request do
       let(:invalid_params) { get_user_params("invalid") }
       before(:each) do
         post "/api/users", params: invalid_params
-        @resp_json = JSON.parse(response.body)["resp"]
+        @resp_json = parse_resp_on_json(response)
       end
       it "returns a 400 status" do
         expect(response).to have_http_status(400)
@@ -42,7 +42,7 @@ RSpec.describe "Users", type: :request do
       context "when request success" do
         before(:each) do
           get "/api/user/#{user.id}", headers: token
-          @resp_json = JSON.parse(response.body)["resp"]
+          @resp_json = parse_resp_on_json(response)
         end
         it "returns a 200 status" do
           expect(response).to have_http_status(200)
@@ -55,7 +55,7 @@ RSpec.describe "Users", type: :request do
       context "when request fails" do
         before(:each) do
           get "/api/user/#{user.id + 1}", headers: token
-          @resp_json = JSON.parse(response.body)["resp"]
+          @resp_json = parse_resp_on_json(response)
         end
         it "returns a 404 status" do
           expect(response).to have_http_status(404)
@@ -66,37 +66,37 @@ RSpec.describe "Users", type: :request do
       end
     end
     describe '#update' do
+      let(:update_params) { { "username" => "fernandocgomeztwo", "password" => "Ilovemytacos32%", "password_confirmation" => "Ilovemytacos32%" } }
+      let(:update_invalid_params) { { "username" => nil, "password" => "Ilovemytacos32%", "password_confirmation" => "Ilovemytacos32%" } }
       context 'when request success' do
         before(:each) do
-          @update_params = { "username" => "fernandocgomeztwo", "password" => "Ilovemytacos32%", "password_confirmation" => "Ilovemytacos32%" }
-          put "/api/user/#{user.id}", params: @update_params, headers: token
-          @resp_json = JSON.parse(response.body)["resp"]
+          put "/api/user/#{user.id}", params: update_params, headers: token
+          @resp_json = parse_resp_on_json(response)
         end
         it "returns a 200 status" do
           expect(response).to have_http_status(200)
         end
         it "returns updated user" do
-          expect(@resp_json["username"]).to match(@update_params["username"])
+          expect(@resp_json["username"]).to match(update_params["username"])
         end
       end
       context 'when request fails because of invalid params' do
         before(:each) do
-          @update_invalid_params = { "username" => nil, "password" => "Ilovemytacos32%", "password_confirmation" => "Ilovemytacos32%" }
-          put "/api/user/#{user.id}", params: @update_invalid_params, headers: token
-          @resp_json = JSON.parse(response.body)["resp"]
+          put "/api/user/#{user.id}", params: update_invalid_params, headers: token
+          @resp_json = parse_resp_on_json(response)
         end
         it "returns a 400 status" do
           expect(response).to have_http_status(400)
         end
         it "returns an object of errors on JSON" do
-          expect(@resp_json["resp"]).to_not eq({})
+          expect(@resp_json).to include("username")
+          expect(@resp_json).to_not eq({})
         end
       end
       context 'when request fails because of unauthorized client' do
         before(:each) do
-          @update_params = { "username" => "fernandocgomeztwo", "password" => "Ilovemytacos32%", "password_confirmation" => "Ilovemytacos32%" }
-          put "/api/user/#{other_user.id}", params: @update_params, headers: token
-          @resp_json = JSON.parse(response.body)["resp"]
+          put "/api/user/#{other_user.id}", params: update_params, headers: token
+          @resp_json = parse_resp_on_json(response)
         end
         it "returns a 401 status" do
           expect(response).to have_http_status(401)
@@ -110,7 +110,7 @@ RSpec.describe "Users", type: :request do
       context 'request is successful' do
         before(:each) do
           delete "/api/user/#{user.id}", headers: token
-          @resp_json = JSON.parse(response.body)["resp"]
+          @resp_json = parse_resp_on_json(response)
         end
         it "returns a 200 status" do
           expect(response).to have_http_status(200)
@@ -122,7 +122,7 @@ RSpec.describe "Users", type: :request do
       context 'when request fails because of unauthorized client' do
         before(:each) do
           delete "/api/user/#{other_user.id}", headers: token
-          @resp_json = JSON.parse(response.body)["resp"]
+          @resp_json = parse_resp_on_json(response)
         end
         it "returns a 401 status" do
           expect(response).to have_http_status(401)
