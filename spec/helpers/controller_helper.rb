@@ -65,5 +65,29 @@ module ControllerHelper
         matcher
     end
 
+    # <----------- Column --------------->
+
+    @@column_params = ParamsHelper.get_column_params
+
+    def get_column_params(type, board_id)
+        params = @@column_params.clone
+        params['board_id'] = board_id
+        case type
+        when "valid"
+            return params
+        when "invalid"
+            params['name'] = nil
+            return params
+        else
+            return nil
+        end
+    end
+
+    def get_column_matcher(column_id, board_id)
+        matcher = @@column_params.clone
+        matcher['id'] = column_id
+        matcher['board_id'] = board_id
+        matcher
+    end
 
 end
