@@ -15,6 +15,9 @@ RSpec.describe "Columns", type: :request do
 
   let(:column) { create(:column, board_id: board.id) }
 
+  let(:update_params) { { "name" => "New updated name", "position" => 0 } }
+  let(:invalid_update_params) { { "name" => "M" } }
+
   describe "#create" do
     context "when request success" do
       before(:each) do
@@ -69,58 +72,103 @@ RSpec.describe "Columns", type: :request do
     end
   end
 
-  # describe "PUT /api/column/:id" do
-  #   before(:each) do
-  #     post "/api/columns", params: @params
-  #     # @column_resp = JSON.parse(response.body)
-  #     @column_resp = JSON.parse(response.body)
-  #     @update_params = { "name" => "New updated name" }
-  #     @update_invalid_params = { "name" => "M" }
-  #   end
-  #   context "request is succesful" do
-  #     it "returns a 200 status" do
-  #       put "/api/column/#{@column_resp["resp"]["id"]}", params: @update_params
+  describe "#update" do
+    before(:each) do
+      put "/api/column/#{column.id}", params: update_params, headers: token
+      @resp_json = parse_resp_on_json(response)
+    end
+    context "when request success" do
+      it "returns a 200 status" do
+        expect(response).to have_http_status(200)
+      end
+      it "returns the updated instance of the Column model on JSON" do
+        matcher = get_column_matcher(column.id, board.id)
+        matcher["name"] = update_params["name"]
+        expect(@resp_json).to match(matcher)
+      end
+    end
+    context "when request fails becuase of an invalid id" do
+      before(:each) do
+        put "/api/column/#{column.id + 1}", params: update_params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 404 status" do
+        expect(response).to have_http_status(404)
+      end
+      it "returns an error message on JSON" do
+        expect(@resp_json).to eql("column can't be found")
+      end
+    end
+    context "when request fails becuase of invalid params" do
+      before(:each) do
+        put "/api/column/#{column.id}", params: invalid_update_params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 400 status" do
+        expect(response).to have_http_status(400)
+      end
+      it "returns an object of error messages in JSON" do
+        expect(@resp_json).to_not match({})
+        expect(@resp_json).to include("name")
+      end
+    end
+    context 'when user tries to update a column not associated with his board' do
+      before(:each) do
+        put "/api/column/#{column.id}", params: update_params, headers: other_user_token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 401 status" do
+        expect(response).to have_http_status(401)
+      end
+      it "returns an error message on JSON" do
+        expect(@resp_json).to match("you can not update a column that is not associated with one of yours boards without being an admin")
+      end
+    end
+    context 'when position attribute is updated to a greater value than the current one' do
+      before(:each) do
+        @column2 = create(:column, name: "My second column", position: 1, board_id: board.id)
+        @column3 = create(:column, name: "My third column", position: 2, board_id: board.id)
+        put "/api/column/#{column.id}", params: { "position" => 2 }, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it 'changes the position value' do
+        expect(@resp_json["position"]).to eq(2) 
+      end
+      it 'updates the postion attribute of the other columns from their current value to thier current value minus 1' do
+        expect(Column.find_by_id(@column2.id).position).to eq(0)
+        expect(Column.find_by_id(@column3.id).position).to eq(1)
+      end
+    end
+    context 'when the position attribute is updated to a lower value than the current one' do
+      before(:each) do
+        @column1 = create(:column, name: "My first column", position: 0, board_id: board.id)
+        @column2 = create(:column, name: "My second column", position: 1, board_id: board.id)
+        @column3 = create(:column, name: "My third column", position: 2, board_id: board.id)
+        put "/api/column/#{@column3.id}", params: { "position" => 0 }, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it 'changes the position value' do
+        expect(@resp_json["position"]).to eq(0) 
+      end
+      it 'updates the postion attribute of the other columns from thier current value to thier current value plus 1' do
+        expect(Column.find_by_id(@column2.id).position).to eq(2)
+        expect(Column.find_by_id(@column1.id).position).to eq(1)
+      end
+    end
+    context 'when the position attribute is updated to the same value' do
+      before(:each) do
+        put "/api/column/#{column.id}", params: { "position" => 0 }, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it 'it returns a 400 status' do
+        expect(response).to have_http_status(400)
+      end
+      it 'returns an error message on JSON' do
+        expect(@resp_json).to match("column has the same position value")
+      end
+    end
+  end
 
-  #       expect(response).to have_http_status(200)
-  #     end
-  #     it "returns the updated instance of the Column model on JSON" do
-  #       put "/api/column/#{@column_resp["resp"]["id"]}", params: @update_params
-  #       resp_json = JSON.parse(response.body)
-  #       @matcher["id"] = @column_resp["resp"]["id"]
-  #       @matcher["name"] = @update_params["name"]
-
-  #       expect(resp_json["resp"]).to match(@matcher)
-  #     end
-  #   end
-  #   context "request fails(invalid id)" do
-  #     it "returns a 404 status" do
-  #       put "/api/column/#{@column_resp["resp"]["id"] + 1}", params: @update_params
-
-  #       expect(response).to have_http_status(404)
-  #     end
-  #     it "returns an error message on JSON" do
-  #       put "/api/column/#{@column_resp["resp"]["id"] + 1}", params: @update_params
-  #       resp_json = JSON.parse(response.body)
-
-  #       expect(resp_json["resp"]).to eql("column can't be found")
-  #     end
-  #   end
-  #   context "request fails(invalid paramas)" do
-  #     it "returns a 400 status" do
-  #       put "/api/column/#{@column_resp["resp"]["id"]}", params: @update_invalid_params
-
-  #       expect(response).to have_http_status(400)
-  #     end
-  #     it "returns an object of error messages in JSON" do
-  #       put "/api/column/#{@column_resp["resp"]["id"]}", params: @update_invalid_params
-
-  #       resp_json = JSON.parse(response.body)
-
-  #       expect(resp_json["resp"]).to_not match({})
-  #       expect(resp_json["resp"]).to include("name")
-  #     end
-  #   end
-  # end
 
   # describe "DELETE /api/column/:id" do
   #   before(:each) do
