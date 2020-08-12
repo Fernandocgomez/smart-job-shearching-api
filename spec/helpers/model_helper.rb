@@ -45,18 +45,18 @@ module ModelHelper
 
   @@column_params = ParamsHelper.get_column_params
 
-  def get_column_params(board_id)
-    params = @@column_params.clone
-    params['board_id'] = board_id
-    params
-  end
+  # def get_column_params(board_id)
+  #   params = @@column_params.clone
+  #   params['board_id'] = board_id
+  #   params
+  # end
 
-  def get_invalid_column_params(board_id, invalid_param)
-    params = @@column_params.clone
-    params['name'] = invalid_param
-    params['board_id'] = board_id
-    params
-  end
+  # def get_invalid_column_params(board_id, invalid_param)
+  #   params = @@column_params.clone
+  #   params['name'] = invalid_param
+  #   params['board_id'] = board_id
+  #   params
+  # end
 
   def create_column(board_id)
     params = @@column_params.clone
