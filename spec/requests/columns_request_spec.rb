@@ -8,7 +8,6 @@ RSpec.describe "Columns", type: :request do
   let(:other_user_token) { get_auth_token(other_user.id) }
 
   let(:board) { create(:board, user_id: user.id) }
-  let(:other_user_board) { create(:board, user_id: other_user.id) }
 
   let(:params) { get_column_params("valid", board.id) }
   let(:invalid_params) { get_column_params("invalid", board.id) }
@@ -124,22 +123,19 @@ RSpec.describe "Columns", type: :request do
         expect(@resp_json).to match("you can not update a column that is not associated with one of yours boards without being an admin")
       end
     end
-    context 'when position attribute is updated to a greater value than the current one' do
+    context 'when position is updated to a greater value' do
       before(:each) do
         @column2 = create(:column, name: "My second column", position: 1, board_id: board.id)
         @column3 = create(:column, name: "My third column", position: 2, board_id: board.id)
         put "/api/column/#{column.id}", params: { "position" => 2 }, headers: token
         @resp_json = parse_resp_on_json(response)
       end
-      it 'changes the position value' do
-        expect(@resp_json["position"]).to eq(2) 
-      end
-      it 'updates the postion attribute of the other columns from their current value to thier current value minus 1' do
+      it 'updates the position of the other columns that are on the range of the column old position to the column new position by minus 1' do
         expect(Column.find_by_id(@column2.id).position).to eq(0)
         expect(Column.find_by_id(@column3.id).position).to eq(1)
       end
     end
-    context 'when the position attribute is updated to a lower value than the current one' do
+    context 'when the position is updated to a lower value' do
       before(:each) do
         @column1 = create(:column, name: "My first column", position: 0, board_id: board.id)
         @column2 = create(:column, name: "My second column", position: 1, board_id: board.id)
@@ -147,15 +143,12 @@ RSpec.describe "Columns", type: :request do
         put "/api/column/#{@column3.id}", params: { "position" => 0 }, headers: token
         @resp_json = parse_resp_on_json(response)
       end
-      it 'changes the position value' do
-        expect(@resp_json["position"]).to eq(0) 
-      end
-      it 'updates the postion attribute of the other columns from thier current value to thier current value plus 1' do
+      it 'updates the position of the other columns that are on the range of the column old position to the column new position by plus 1' do
         expect(Column.find_by_id(@column2.id).position).to eq(2)
         expect(Column.find_by_id(@column1.id).position).to eq(1)
       end
     end
-    context 'when the position attribute is updated to the same value' do
+    context 'when the position is updated to the same value' do
       before(:each) do
         put "/api/column/#{column.id}", params: { "position" => 0 }, headers: token
         @resp_json = parse_resp_on_json(response)
@@ -169,41 +162,59 @@ RSpec.describe "Columns", type: :request do
     end
   end
 
-
-  # describe "DELETE /api/column/:id" do
-  #   before(:each) do
-  #     post "/api/columns", params: @params
-  #     @column_resp = JSON.parse(response.body)
-  #   end
-  #   context "request is successful" do
-  #     it "returns a 200 status" do
-  #       delete "/api/column/#{@column_resp["resp"]["id"]}"
-
-  #       expect(response).to have_http_status(200)
-  #     end
-  #     it "returns a confirmation message on JSON" do
-  #       delete "/api/column/#{@column_resp["resp"]["id"]}"
-  #       resp_json = JSON.parse(response.body)
-
-  #       expect(resp_json["resp"]).to eql("column has been deleted")
-  #     end
-  #     it "destroy record from the DB" do
-  #       db_size = Column.all.size
-  #       delete "/api/column/#{@column_resp["resp"]["id"]}"
-
-  #       expect(Column.all.size).to eq(db_size - 1)
-  #     end
-  #   end
-  #   context "request fails" do
-  #     it "returns a 404 status" do
-  #       delete "/api/column/#{@column_resp["resp"]["id"] + 1}"
-  #       expect(response).to have_http_status(404)
-  #     end
-  #     it "rreturns an error message on JSON" do
-  #       delete "/api/column/#{@column_resp["resp"]["id"] + 1}"
-  #       resp_json = JSON.parse(response.body)
-
-  #       expect(resp_json["resp"]).to eql("column can't be found")
-  #     end
-  #   end
+  describe "#destroy" do
+    context "when request is successful" do
+      before(:each) do
+        delete "/api/column/#{column.id}", headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 200 status" do
+        expect(response).to have_http_status(200)
+      end
+      it "returns a confirmation message on JSON" do
+        expect(@resp_json).to match("column has been deleted")
+      end
+      it "destroys record from the DB" do
+        expect(Column.count).to eq(0)
+      end
+    end
+    context "when request fails because of an invalid id" do
+      before(:each) do
+        delete "/api/column/#{column.id + 1}", headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 404 status" do
+        expect(response).to have_http_status(404)
+      end
+      it "returns an error message on JSON" do
+        expect(@resp_json).to match("column can't be found")
+      end
+    end
+    context 'when user tries to delete a column not associated with his board' do
+      before(:each) do
+        delete "/api/column/#{column.id}", headers: other_user_token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it 'returns a 401 status' do
+        expect(response).to have_http_status(401)
+      end
+      it 'returns an error message on JSON' do
+        expect(@resp_json).to match("you can not delete a column that is not associated with one of yours boards without being an admin")
+      end
+    end
+    context 'when a column is deleted' do
+      before(:each) do
+        @column3 = create(:column, name: "My third column", position: 2, board_id: board.id)
+        @column2 = create(:column, name: "My second column", position: 1, board_id: board.id)
+        @column1 = create(:column, name: "My first column", position: 0, board_id: board.id)
+        @column4 = create(:column, name: "My fourth column", position: 3, board_id: board.id)
+        delete "/api/column/#{@column2.id}", headers: token
+      end
+      it 'updates the position of all the following columns' do
+        expect(Column.find_by_id(@column1.id).position).to eq(0)
+        expect(Column.find_by_id(@column3.id).position).to eq(1)
+        expect(Column.find_by_id(@column4.id).position).to eq(2)
+      end
+    end
+  end
 end

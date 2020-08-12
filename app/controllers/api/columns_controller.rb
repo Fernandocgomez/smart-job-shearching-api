@@ -33,10 +33,15 @@ class Api::ColumnsController < ApplicationController
   end
 
   def destroy
-    column = Column.all.find_by_id(params[:id])
+    column = Column.find_by_id(params[:id])
     if column
-      column.destroy
-      render json: { "resp" => "column has been deleted" }, status: 200
+      board = Board.find_by_id(column["board_id"])
+      if is_user_authorized?(board)
+        update_positions_before_delete(board, column)
+        delete_column(column)
+      else
+        render json: { "resp" => "you can not delete a column that is not associated with one of yours boards without being an admin" }, status: 401
+      end
     else
       render json: { "resp" => "column can't be found" }, status: 404
     end
@@ -106,6 +111,20 @@ class Api::ColumnsController < ApplicationController
     else
       render json: { "resp" => column.errors.messages }, status: 400
     end
+  end
+
+  def update_positions_before_delete(board, column)
+    all_columns = board.columns
+    all_columns.each do |record|
+      if record.position > column.position
+        record.update({"position" => record.position - 1})
+      end
+    end
+  end
+
+  def delete_column(column)
+    column.destroy
+    render json: { "resp" => "column has been deleted" }, status: 200
   end
 
   def column_params
