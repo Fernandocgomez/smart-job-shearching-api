@@ -93,35 +93,35 @@ module ModelHelper
 
   @@lead_params = ParamsHelper.get_lead_params
 
-  def create_lead(column_id, company_id)
-    params = @@lead_params.clone
-    params['column_id'] = column_id
-    params['company_id'] = company_id
-    Lead.create(params)
-  end
+  # def create_lead(column_id, company_id)
+  #   params = @@lead_params.clone
+  #   params['column_id'] = column_id
+  #   params['company_id'] = company_id
+  #   Lead.create(params)
+  # end
 
-  def get_lead_params(column_id, company_id)
-    params = @@lead_params.clone
-    params['column_id'] = column_id
-    params['company_id'] = company_id
-    params
-  end
+  # def get_lead_params(column_id, company_id)
+  #   params = @@lead_params.clone
+  #   params['column_id'] = column_id
+  #   params['company_id'] = company_id
+  #   params
+  # end
 
-  def get_invalid_lead_params(column_id, company_id)
-    params = @@lead_params.clone
-    params['column_id'] = column_id
-    params['company_id'] = company_id
-    params['first_name'] = nil
-    params
-  end
+  # def get_invalid_lead_params(column_id, company_id)
+  #   params = @@lead_params.clone
+  #   params['column_id'] = column_id
+  #   params['company_id'] = company_id
+  #   params['first_name'] = nil
+  #   params
+  # end
 
-  def get_lead_matcher(column_id, company_id)
-    params = @@lead_params.clone
-    params['id'] = nil
-    params['column_id'] = column_id
-    params['company_id'] = company_id
-    params
-  end
+  # def get_lead_matcher(column_id, company_id)
+  #   params = @@lead_params.clone
+  #   params['id'] = nil
+  #   params['column_id'] = column_id
+  #   params['company_id'] = company_id
+  #   params
+  # end
 
 
   # <----------- JobPosition ---------------->

@@ -9,6 +9,7 @@ class CreateLeads < ActiveRecord::Migration[6.0]
       t.string :notes, default: "write a note...", null: false 
       t.string :email, null: true
       t.string :phone_number, default: "3462600832", null: false
+      t.integer :position, null: false
       t.integer :column_id, null: false
       t.integer :company_id, null: false
 
