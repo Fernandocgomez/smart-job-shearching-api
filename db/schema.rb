@@ -35,6 +35,7 @@ ActiveRecord::Schema.define(version: 2020_07_16_045054) do
     t.string "linkedin_url", null: false
     t.string "website", default: "wwww.companyxwy.com"
     t.text "about", default: "about the company"
+    t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
@@ -45,7 +46,6 @@ ActiveRecord::Schema.define(version: 2020_07_16_045054) do
     t.string "city", null: false
     t.string "state", null: false
     t.boolean "applied", default: false, null: false
-    t.integer "user_id", null: false
     t.integer "company_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false

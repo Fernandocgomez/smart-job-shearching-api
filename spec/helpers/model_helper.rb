@@ -72,22 +72,22 @@ module ModelHelper
     Company.create(@@company_params)
   end
 
-  def get_company_params
-    params = @@company_params.clone
-    params
-  end
+  # def get_company_params
+  #   params = @@company_params.clone
+  #   params
+  # end
 
-  def get_invalid_cpmpany_params 
-    params = @@company_params.clone
-    params['name'] = nil
-    params
-  end
+  # def get_invalid_cpmpany_params 
+  #   params = @@company_params.clone
+  #   params['name'] = nil
+  #   params
+  # end
 
-  def get_company_matcher(company_id)
-    params = @@company_params.clone
-    params['id'] = company_id
-    params
-  end
+  # def get_company_matcher(company_id)
+  #   params = @@company_params.clone
+  #   params['id'] = company_id
+  #   params
+  # end
 
   # <----------- Lead ---------------->
 

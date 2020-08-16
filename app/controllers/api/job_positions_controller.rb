@@ -52,7 +52,6 @@ class Api::JobPositionsController < ApplicationController
       :city,
       :state,
       :applied,
-      :user_id,
       :company_id
     )
   end

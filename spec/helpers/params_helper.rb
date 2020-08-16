@@ -19,11 +19,12 @@ module ParamsHelper
             "name" => "Just Energy",
             "linkedin_url" => "/company/just-energy_2/life/",
             "website" => "wwww.companyxwy.com",
-            "about" => "about the company"
+            "about" => "about the company", 
+            "user_id" => nil
         }
     end
 
-    def self.get_lead_params 
+    def self.get_lead_params
         {
             "first_name" => "Andrew",
             "last_name" => "Sprague", 
@@ -81,7 +82,6 @@ module ParamsHelper
             "city" => "Houston", 
             "state" => "TX", 
             "applied" => false, 
-            "user_id" => nil, 
             "company_id" => nil
         }
     end

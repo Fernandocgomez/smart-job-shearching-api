@@ -1,6 +1,7 @@
 class User < ApplicationRecord
   has_many :boards, dependent: :delete_all
-  has_many :job_positions, dependent: :delete_all
+  has_many :companies, dependent: :delete_all
+
 
   has_secure_password
 
@@ -8,7 +9,7 @@ class User < ApplicationRecord
 
   # associations validations
   validates_associated :boards 
-  validates_associated :job_positions 
+  validates_associated :companies 
 
   # Global validations
   validates :username, :email, :password, :password_confirmation, :first_name, :last_name, :city, :state, :zipcode, { 
