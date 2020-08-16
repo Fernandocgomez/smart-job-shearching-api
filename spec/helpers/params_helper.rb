@@ -34,6 +34,7 @@ module ParamsHelper
             "notes" => "write a note...", 
             "email" => "asprague@outlook.com",
             "phone_number" => "3462600832", 
+            "position" => 0,
             "column_id" => nil,
             "company_id" => nil
         }

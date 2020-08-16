@@ -11,11 +11,10 @@ RSpec.describe "Columns", type: :request do
 
   let(:params) { get_column_params("valid", board.id) }
   let(:invalid_params) { get_column_params("invalid", board.id) }
-
-  let(:column) { create(:column, board_id: board.id) }
-
   let(:update_params) { { "name" => "New updated name", "position" => 0 } }
   let(:invalid_update_params) { { "name" => "M" } }
+
+  let(:column) { create(:column, board_id: board.id) }
 
   describe "#create" do
     context "when request success" do
@@ -57,7 +56,7 @@ RSpec.describe "Columns", type: :request do
         expect(@resp_json).to include("name")
       end
     end
-    context 'when user tries to create a column not associated with his board' do
+    context 'when user tries to create a column not associated with its board' do
       before(:each) do
         post "/api/columns", params: params, headers: other_user_token
         @resp_json = parse_resp_on_json(response)

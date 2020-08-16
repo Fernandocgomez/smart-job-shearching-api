@@ -72,6 +72,7 @@ ActiveRecord::Schema.define(version: 2020_07_16_045054) do
     t.string "notes", default: "write a note...", null: false
     t.string "email"
     t.string "phone_number", default: "3462600832", null: false
+    t.integer "position", null: false
     t.integer "column_id", null: false
     t.integer "company_id", null: false
     t.datetime "created_at", precision: 6, null: false

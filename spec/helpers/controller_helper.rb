@@ -91,7 +91,7 @@ module ControllerHelper
     matcher
   end
 
-  # <----------- Column --------------->
+  # <----------- Company --------------->
 
   @@company_params = ParamsHelper.get_company_params
 
@@ -115,4 +115,33 @@ module ControllerHelper
     matcher["user_id"] = user_id
     matcher
   end
+
+  # <----------- Lead --------------->
+
+  @@lead_params = ParamsHelper.get_lead_params
+
+  def get_lead_params(type, column_id, company_id)
+    params = @@lead_params.clone
+    params["column_id"] = column_id
+    params["company_id"] = company_id
+    case type
+    when "valid"
+      return params
+    when "invalid"
+      params["first_name"] = nil
+      return params
+    else
+      return nil
+    end
+  end
+
+  def get_lead_matcher(lead_id, column_id, company_id)
+    matcher = @@lead_params.clone
+    matcher["id"] = lead_id
+    matcher["column_id"] = column_id
+    matcher["company_id"] = company_id
+    matcher
+  end
+
+
 end
