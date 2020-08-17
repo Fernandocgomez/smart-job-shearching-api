@@ -44,6 +44,17 @@ RSpec.describe "Leads", type: :request do
       end
     end
 
+    context 'when a lead is created' do
+      before(:each) do
+        create(:lead, column_id: column.id, company_id: company.id)
+        post "/api/leads", params: params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it 'gets a default position value based on the number of leads' do
+        expect(@resp_json["position"]).to eq(1)
+      end
+    end
+
     context "when request fails because of invalid params" do
       before(:each) do
         post "/api/leads", params: invalid_params, headers: token
@@ -131,6 +142,52 @@ RSpec.describe "Leads", type: :request do
         matcher = get_lead_matcher(@resp_json["id"], column.id, company.id)
         matcher["first_name"] = update_params["first_name"]
         expect(@resp_json).to match(matcher)
+      end
+    end
+
+    context 'when position is updated to a lower value' do
+      before(:each) do
+        @lead_position_0 = create(:lead, column_id: column.id, company_id: company.id, position: 0)
+        @lead_position_1 = create(:lead, column_id: column.id, company_id: company.id, position: 1)
+        @lead_position_2 = create(:lead, column_id: column.id, company_id: company.id, position: 2)
+        @lead_position_3 = create(:lead, column_id: column.id, company_id: company.id, position: 3)
+        put "/api/lead/#{@lead_position_2.id}", params: {"position" => 0}, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it 'updates the position of the other leads that are on the range of the lead old position to the lead new position by + 1' do
+        expect(Lead.find_by_id(@lead_position_2.id).position).to eq(0)
+        expect(Lead.find_by_id(@lead_position_0.id).position).to eq(1)
+        expect(Lead.find_by_id(@lead_position_1.id).position).to eq(2)
+        expect(Lead.find_by_id(@lead_position_3.id).position).to eq(3)
+      end
+    end
+
+    context 'when position is updated to a higher value' do
+      before(:each) do
+        @lead_position_1 = create(:lead, column_id: column.id, company_id: company.id, position: 1)
+        @lead_position_2 = create(:lead, column_id: column.id, company_id: company.id, position: 2)
+        @lead_position_3 = create(:lead, column_id: column.id, company_id: company.id, position: 3)
+        put "/api/lead/#{lead.id}", params: {"position" => 2}, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it 'updates the position of the other leads that are on the range of the lead old position to the lead new position by - 1' do
+        expect(Lead.find_by_id(lead.id).position).to eq(2)
+        expect(Lead.find_by_id(@lead_position_1.id).position).to eq(0)
+        expect(Lead.find_by_id(@lead_position_2.id).position).to eq(1)
+        expect(Lead.find_by_id(@lead_position_3.id).position).to eq(3)
+      end
+    end
+
+    context 'when the position is updated to the same value' do
+      before(:each) do
+        put "/api/lead/#{lead.id}", params: {"position" => 0}, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it 'it returns a 400 status' do
+        expect(response).to have_http_status(400)
+      end
+      it 'returns an error message on JSON' do
+        expect(@resp_json).to match("lead has the same position value")
       end
     end
 
