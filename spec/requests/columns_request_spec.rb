@@ -17,6 +17,7 @@ RSpec.describe "Columns", type: :request do
   let(:column) { create(:column, board_id: board.id) }
 
   describe "#create" do
+
     context "when request success" do
       before(:each) do
         post "/api/columns", params: params, headers: token
@@ -33,6 +34,7 @@ RSpec.describe "Columns", type: :request do
         expect(Column.count).to eql(1)
       end
     end
+
     context 'when a new record is created' do
       before(:each) do
         post "/api/columns", params: params, headers: token
@@ -43,6 +45,7 @@ RSpec.describe "Columns", type: :request do
         expect(@resp_json["position"]).to eql(1)
       end
     end
+
     context "when request fails becuase of invalid params" do
       before(:each) do
         post "/api/columns", params: invalid_params, headers: token
@@ -56,6 +59,7 @@ RSpec.describe "Columns", type: :request do
         expect(@resp_json).to include("name")
       end
     end
+
     context 'when user tries to create a column not associated with its board' do
       before(:each) do
         post "/api/columns", params: params, headers: other_user_token
@@ -68,14 +72,16 @@ RSpec.describe "Columns", type: :request do
         expect(@resp_json).to match("you can not create a column that is not associated with one of yours boards without being an admin")
       end
     end
+
   end
 
   describe "#update" do
-    before(:each) do
-      put "/api/column/#{column.id}", params: update_params, headers: token
-      @resp_json = parse_resp_on_json(response)
-    end
+
     context "when request success" do
+      before(:each) do
+        put "/api/column/#{column.id}", params: update_params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
       it "returns a 200 status" do
         expect(response).to have_http_status(200)
       end
@@ -85,6 +91,7 @@ RSpec.describe "Columns", type: :request do
         expect(@resp_json).to match(matcher)
       end
     end
+
     context "when request fails becuase of an invalid id" do
       before(:each) do
         put "/api/column/#{column.id + 1}", params: update_params, headers: token
@@ -97,6 +104,7 @@ RSpec.describe "Columns", type: :request do
         expect(@resp_json).to eql("column can't be found")
       end
     end
+
     context "when request fails becuase of invalid params" do
       before(:each) do
         put "/api/column/#{column.id}", params: invalid_update_params, headers: token
@@ -110,6 +118,7 @@ RSpec.describe "Columns", type: :request do
         expect(@resp_json).to include("name")
       end
     end
+
     context 'when user tries to update a column not associated with his board' do
       before(:each) do
         put "/api/column/#{column.id}", params: update_params, headers: other_user_token
@@ -122,7 +131,8 @@ RSpec.describe "Columns", type: :request do
         expect(@resp_json).to match("you can not update a column that is not associated with one of yours boards without being an admin")
       end
     end
-    context 'when position is updated to a greater value' do
+
+    context 'when position is updated to a higher value' do
       before(:each) do
         @column2 = create(:column, name: "My second column", position: 1, board_id: board.id)
         @column3 = create(:column, name: "My third column", position: 2, board_id: board.id)
@@ -134,6 +144,7 @@ RSpec.describe "Columns", type: :request do
         expect(Column.find_by_id(@column3.id).position).to eq(1)
       end
     end
+
     context 'when the position is updated to a lower value' do
       before(:each) do
         @column1 = create(:column, name: "My first column", position: 0, board_id: board.id)
@@ -147,6 +158,7 @@ RSpec.describe "Columns", type: :request do
         expect(Column.find_by_id(@column1.id).position).to eq(1)
       end
     end
+
     context 'when the position is updated to the same value' do
       before(:each) do
         put "/api/column/#{column.id}", params: { "position" => 0 }, headers: token
@@ -159,9 +171,11 @@ RSpec.describe "Columns", type: :request do
         expect(@resp_json).to match("column has the same position value")
       end
     end
+
   end
 
   describe "#destroy" do
+
     context "when request is successful" do
       before(:each) do
         delete "/api/column/#{column.id}", headers: token
@@ -177,6 +191,7 @@ RSpec.describe "Columns", type: :request do
         expect(Column.count).to eq(0)
       end
     end
+
     context "when request fails because of an invalid id" do
       before(:each) do
         delete "/api/column/#{column.id + 1}", headers: token
@@ -189,6 +204,7 @@ RSpec.describe "Columns", type: :request do
         expect(@resp_json).to match("column can't be found")
       end
     end
+
     context 'when user tries to delete a column not associated with his board' do
       before(:each) do
         delete "/api/column/#{column.id}", headers: other_user_token
@@ -201,6 +217,7 @@ RSpec.describe "Columns", type: :request do
         expect(@resp_json).to match("you can not delete a column that is not associated with one of yours boards without being an admin")
       end
     end
+
     context 'when a column is deleted' do
       before(:each) do
         @column3 = create(:column, name: "My third column", position: 2, board_id: board.id)
@@ -215,5 +232,6 @@ RSpec.describe "Columns", type: :request do
         expect(Column.find_by_id(@column4.id).position).to eq(2)
       end
     end
+
   end
 end

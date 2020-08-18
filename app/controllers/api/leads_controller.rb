@@ -4,7 +4,8 @@ class Api::LeadsController < ApplicationController
     column = Column.find_by_id(column_id)
     user_id = column ? column.board.user.id : nil
     if user_auth?(user_id)
-      create_lead(lead_params)
+      updated_params = set_default_position(column, lead_params)
+      create_lead(updated_params)
     else
       unauthorized_error_message("create")
     end
@@ -29,7 +30,19 @@ class Api::LeadsController < ApplicationController
     if lead 
       user_id = lead.column.board.user.id
       if user_auth?(user_id)
-        update_lead(lead_params, lead)
+        if lead_params.include?("position")
+          if lead_has_same_position(lead, lead_params) && lead_params.keys.size == 1
+            render json: {"resp" => "lead has the same position value"}, status: 400
+          else
+            if lead_has_same_position(lead, lead_params)
+              update_lead(lead_params, lead)
+            else 
+              update_position(lead, lead_params)
+            end
+          end
+        else
+          update_lead(lead_params, lead)
+        end
       else
         unauthorized_error_message("update")
       end
@@ -42,7 +55,8 @@ class Api::LeadsController < ApplicationController
     lead = Lead.find_by_id(params[:id])
     if lead
       user_id = lead.column.board.user.id
-      if user_auth?(user_id)
+    if user_auth?(user_id)
+        adjust_positions_before_delete_or_move(lead)
         destroy_lead(lead)
       else
         unauthorized_error_message("delete")
@@ -50,6 +64,22 @@ class Api::LeadsController < ApplicationController
     else
       not_found_error_message
     end
+  end
+
+  def move_lead_to_other_column
+    lead = Lead.find_by_id(params[:id])
+    if lead
+      user_id = lead.column.board.user.id
+      if user_auth?(user_id)
+        adjust_lead_positions_on_both_columns(lead, lead_params)
+        update_lead(lead_params, lead)
+      else
+        unauthorized_error_message("move")
+      end
+    else
+      not_found_error_message
+    end
+
   end
 
   private
@@ -88,6 +118,67 @@ class Api::LeadsController < ApplicationController
 
   def not_found_error_message
     render json: {"resp" => "lead can't be found"}, status: 404
+  end
+
+  def set_default_position(column, params)
+    updated_params = params
+    number_of_leads = column.leads.count
+    updated_params["position"] = number_of_leads
+    updated_params
+  end
+
+  def update_position(lead, params)
+    old_position = lead.position
+    new_position = params["position"].to_i
+    leads_associated = lead.column.leads
+    if old_position > new_position
+      leads_associated.each do |record|
+        if record.position.between?(new_position, old_position)
+          if record.id == lead.id
+            record.update(params)
+          else
+            record.update(position: record.position + 1)
+          end
+        end
+      end
+    else
+      leads_associated.each do |record|
+        if record.position.between?(old_position, new_position)
+          if record.id == lead.id
+            record.update(params)
+          else
+            record.update(position: record.position - 1)
+          end
+        end
+      end
+    end
+    updated_lead = Lead.find_by_id(lead.id)
+    render json: {"resp" => LeadSerializer.new(updated_lead)}, status: 200
+  end
+
+  def lead_has_same_position(lead, params)
+    lead.position == params["position"].to_i
+  end
+
+  def adjust_positions_before_delete_or_move(lead)
+    all_leads = lead.column.leads
+    lead_position = lead.position
+    all_leads.each do |record|
+      if lead_position < record.position
+        record.update(position: record.position - 1)
+      end
+    end
+  end
+
+  def adjust_lead_positions_on_both_columns(lead, params)
+    new_column = Column.find_by_id(params["column_id"].to_i)
+    new_column_leads = new_column.leads
+    adjust_positions_before_delete_or_move(lead)
+    new_column_leads.each do |record|
+      if params["position"].to_i <= record.position
+        record.update(position: record.position + 1)
+      end
+    end 
   end
 
   def lead_params
