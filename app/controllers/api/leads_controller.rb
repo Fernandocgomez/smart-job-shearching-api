@@ -56,6 +56,7 @@ class Api::LeadsController < ApplicationController
     if lead
       user_id = lead.column.board.user.id
     if user_auth?(user_id)
+        adjust_positions_before_delete_or_move(lead)
         destroy_lead(lead)
       else
         unauthorized_error_message("delete")
@@ -63,6 +64,22 @@ class Api::LeadsController < ApplicationController
     else
       not_found_error_message
     end
+  end
+
+  def move_lead_to_other_column
+    lead = Lead.find_by_id(params[:id])
+    if lead
+      user_id = lead.column.board.user.id
+      if user_auth?(user_id)
+        adjust_lead_positions_on_both_columns(lead, lead_params)
+        update_lead(lead_params, lead)
+      else
+        unauthorized_error_message("move")
+      end
+    else
+      not_found_error_message
+    end
+
   end
 
   private
@@ -141,6 +158,27 @@ class Api::LeadsController < ApplicationController
 
   def lead_has_same_position(lead, params)
     lead.position == params["position"].to_i
+  end
+
+  def adjust_positions_before_delete_or_move(lead)
+    all_leads = lead.column.leads
+    lead_position = lead.position
+    all_leads.each do |record|
+      if lead_position < record.position
+        record.update(position: record.position - 1)
+      end
+    end
+  end
+
+  def adjust_lead_positions_on_both_columns(lead, params)
+    new_column = Column.find_by_id(params["column_id"].to_i)
+    new_column_leads = new_column.leads
+    adjust_positions_before_delete_or_move(lead)
+    new_column_leads.each do |record|
+      if params["position"].to_i <= record.position
+        record.update(position: record.position + 1)
+      end
+    end 
   end
 
   def lead_params

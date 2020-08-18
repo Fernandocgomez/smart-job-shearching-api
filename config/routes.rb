@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     get "lead/:id" => "leads#show"
     put "lead/:id" => "leads#update"
     delete "lead/:id" => "leads#destroy"
+    put "move_lead_to_other_column/:id" => "leads#move_lead_to_other_column"
 
     post "columns" => "columns#create"
     put "column/:id" => "columns#update"
