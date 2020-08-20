@@ -69,7 +69,7 @@ ActiveRecord::Schema.define(version: 2020_07_16_045054) do
     t.string "picture_url", default: "https://mail.achieverspoint.com/img/default-avatar.jpg", null: false
     t.string "linkedin_url", null: false
     t.string "status", default: "new", null: false
-    t.string "notes", default: "write a note...", null: false
+    t.text "notes", default: "write a note...", null: false
     t.string "email"
     t.string "phone_number", default: "3462600832", null: false
     t.integer "position", null: false
