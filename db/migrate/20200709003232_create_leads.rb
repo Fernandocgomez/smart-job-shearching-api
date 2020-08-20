@@ -6,7 +6,7 @@ class CreateLeads < ActiveRecord::Migration[6.0]
       t.string :picture_url, default: "https://mail.achieverspoint.com/img/default-avatar.jpg", null: false
       t.string :linkedin_url, null: false
       t.string :status, default: "new", null: false
-      t.string :notes, default: "write a note...", null: false 
+      t.text :notes, default: "write a note...", null: false 
       t.string :email, null: true
       t.string :phone_number, default: "3462600832", null: false
       t.integer :position, null: false
