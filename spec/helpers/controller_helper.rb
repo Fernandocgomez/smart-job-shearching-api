@@ -143,5 +143,29 @@ module ControllerHelper
     matcher
   end
 
+  # <----------- JobPosition --------------->
+
+  @@job_position_params = ParamsHelper.get_job_position_params
+
+  def get_job_position_params(type, company_id)
+    params = @@job_position_params.clone
+    params["company_id"] = company_id
+    case type
+    when "valid"
+      return params
+    when "invalid"
+      params["state"] = "TXX"
+      return params
+    else
+      return nil
+    end
+  end
+
+  def get_job_position_matcher(job_position_id, company_id)
+    matcher = @@job_position_params.clone
+    matcher["id"] = job_position_id
+    matcher["company_id"] = company_id
+    matcher
+  end
 
 end

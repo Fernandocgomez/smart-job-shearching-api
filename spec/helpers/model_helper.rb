@@ -126,38 +126,38 @@ module ModelHelper
 
   # <----------- JobPosition ---------------->
 
-  @@job_position_params = ParamsHelper.get_job_position_params
+  # @@job_position_params = ParamsHelper.get_job_position_params
 
-  def create_job_position(user_id, company_id)
-    params = @@job_position_params.clone
-    params['user_id'] = user_id
-    params['company_id'] = company_id
-    JobPosition.create(params)
-  end
+  # def create_job_position(user_id, company_id)
+  #   params = @@job_position_params.clone
+  #   params['user_id'] = user_id
+  #   params['company_id'] = company_id
+  #   JobPosition.create(params)
+  # end
 
-  def get_job_position_params(user_id, company_id)
-    params = @@job_position_params.clone
-    params['user_id'] = user_id
-    params['company_id'] = company_id
-    params
-  end
+  # def get_job_position_params(user_id, company_id)
+  #   params = @@job_position_params.clone
+  #   params['user_id'] = user_id
+  #   params['company_id'] = company_id
+  #   params
+  # end
 
-  def get_job_position_invalid_params(user_id, company_id, invalid_state)
-    params = @@job_position_params.clone
-    params['user_id'] = user_id
-    params['company_id'] = company_id
-    params['state'] = invalid_state
-    params
-  end
+  # def get_job_position_invalid_params(user_id, company_id, invalid_state)
+  #   params = @@job_position_params.clone
+  #   params['user_id'] = user_id
+  #   params['company_id'] = company_id
+  #   params['state'] = invalid_state
+  #   params
+  # end
 
-  def get_job_position_matcher(user_id, company_id, job_position_id)
-    params = @@job_position_params.clone
-    params['user_id'] = user_id
-    params['company_id'] = company_id
-    params['user_id'] = user_id
-    params['id'] = job_position_id
-    params
-  end
+  # def get_job_position_matcher(user_id, company_id, job_position_id)
+  #   params = @@job_position_params.clone
+  #   params['user_id'] = user_id
+  #   params['company_id'] = company_id
+  #   params['user_id'] = user_id
+  #   params['id'] = job_position_id
+  #   params
+  # end
 
   # <----------- LeadEmail ---------------->
 
