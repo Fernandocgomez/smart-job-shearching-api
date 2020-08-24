@@ -168,4 +168,31 @@ module ControllerHelper
     matcher
   end
 
+  # <----------- LeadEmail --------------->
+
+  @@lead_email_params = ParamsHelper.get_lead_email_params
+
+  def get_lead_email_params(type, lead_id, job_position_id)
+    params = @@lead_email_params.clone
+    params["lead_id"] = lead_id
+    params["job_position_id"] = job_position_id
+    case type
+    when "valid"
+      return params
+    when "invalid"
+      params["email"] = "example@examplecom"
+      return params
+    else
+      nil
+    end
+  end
+
+  def get_lead_email_matcher(lead_email_id, lead_id, job_position_id)
+    matcher = @@lead_email_params.clone
+    matcher["id"] = lead_email_id
+    matcher["lead_id"] = lead_id
+    matcher["job_position_id"] = job_position_id
+    matcher
+  end
+
 end
