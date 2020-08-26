@@ -6,7 +6,7 @@ class Company < ApplicationRecord
     validates_associated :job_positions, :leads
 
     # global validations
-    validates :name, :linkedin_url, { 
+    validates :name, :linkedin_url, :user_id, { 
         presence: true 
     }
 
