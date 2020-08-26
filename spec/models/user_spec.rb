@@ -129,7 +129,7 @@ RSpec.describe User, type: :model do
       end
 
       it "must have a default value" do
-        user = init_instance_with_default_value(User, ParamsHelper.get_user_params, "first_name")
+        user = init_user_instance_with_default_value("first_name")
 
         expect(user).to be_valid
         expect(user["first_name"]).to eql("default")
@@ -162,7 +162,7 @@ RSpec.describe User, type: :model do
       end
 
       it "must have a default value" do
-        user = init_instance_with_default_value(User, ParamsHelper.get_user_params, "last_name")
+        user = init_user_instance_with_default_value("last_name")
 
         expect(user).to be_valid
         expect(user["last_name"]).to eql("default")
@@ -194,7 +194,7 @@ RSpec.describe User, type: :model do
         expect(subject).to_not be_valid
       end
       it "must have a default value" do
-        user = init_instance_with_default_value(User, ParamsHelper.get_user_params, "city")
+        user = init_user_instance_with_default_value("city")
 
         expect(user).to be_valid
         expect(user["city"]).to eql("default")
@@ -208,7 +208,7 @@ RSpec.describe User, type: :model do
         expect(subject).to_not be_valid
       end
       it "must have a default value" do
-        user = init_instance_with_default_value(User, ParamsHelper.get_user_params, "state")
+        user = init_user_instance_with_default_value("state")
 
         expect(user).to be_valid
         expect(user["state"]).to eql("default")
