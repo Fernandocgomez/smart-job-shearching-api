@@ -21,6 +21,4 @@ class Column < ApplicationRecord
         numericality: { greater_than_or_equal_to: 0, only_integer: true}
     }
 
-    # board_id validations
-
 end
