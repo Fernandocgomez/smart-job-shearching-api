@@ -1,11 +1,12 @@
 require "rails_helper"
 
 RSpec.describe User, type: :model do
-  subject { init_user_instance }
+
+  subject { build(:user) }
 
   describe "validations" do
 
-    context 'when user instance is initialized' do
+    context 'when a user instance is initialized' do
       it 'passes all the validations' do
         expect(subject).to be_valid
       end
