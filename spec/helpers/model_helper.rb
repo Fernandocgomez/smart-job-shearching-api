@@ -4,7 +4,7 @@ module ModelHelper
 
   # <----------- Global --------------->
 
-  def check_default_value(model, params, attribute)
+  def init_instance_with_default_value(model, params, attribute)
     model.new(params.except!(attribute))
   end
 
@@ -12,12 +12,8 @@ module ModelHelper
 
   @@user_params = ParamsHelper.get_user_params
 
-  def create_user
-    User.create(@@user_params)
-  end
-
-  def create_user_without_validations
-    User.create!(@@user_params)
+  def init_user_instance
+    User.new(@@user_params)
   end
 
   # <----------- Board --------------->

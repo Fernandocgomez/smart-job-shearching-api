@@ -1,11 +1,9 @@
 class User < ApplicationRecord
+
   has_many :boards, dependent: :delete_all
   has_many :companies, dependent: :delete_all
 
-
   has_secure_password
-
-  # https://guides.rubyonrails.org/active_record_validations.html
 
   # associations validations
   validates_associated :boards 
@@ -44,10 +42,6 @@ class User < ApplicationRecord
     format: { with: /\A[a-zA-Z]*\z/, message: "only letters are allowed" },
     length: { within: 2..15 },
   }
-
-  # city validations
-
-  # state validations
 
   # zipcode validations
   validates :zipcode, {
