@@ -9,14 +9,6 @@ class JobPosition < ApplicationRecord
         presence: true
     }
 
-    # name validations
-
-    # description validations
-
-    # must not contain a single double quotes (") (future)
-
-    # city validations
-
     # state validations
     
     validates :state, {
@@ -27,9 +19,5 @@ class JobPosition < ApplicationRecord
     # applied validations
 
     validates_inclusion_of :applied, :in => [true, false]
-
-    # user_id validations
-
-    # company_id validations
 
 end
