@@ -16,25 +16,8 @@ class Lead < ApplicationRecord
     length: { within: 2..15 },
   }
 
-  # picture_url validations
-
-  # linkedin_url validations
-
-  # note vlidations
-
-  # email validations
-
-  validates :email, {
-    format: { with: /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i, message: "email format is not valid" }
-  }
-
   # phone_number validations
 
   validates :phone_number, telephone_number: {country: :us, types: [:mobile]}
-
-
-  # column_id validations
-
-  # company_id validations
 
 end

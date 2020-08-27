@@ -20,4 +20,14 @@ module ModelHelper
     Company.new(params)
   end
 
+  # <----------- Lead --------------->
+
+  def init_lead_instance_with_default_value(column_id, company_id, attribute)
+    params = ParamsHelper.get_lead_params.clone
+    params["column_id"] = column_id
+    params["company_id"] = company_id
+    params.except!(attribute)
+    Lead.new(params)
+  end
+
 end
