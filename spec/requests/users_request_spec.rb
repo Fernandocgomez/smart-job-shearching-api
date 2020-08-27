@@ -1,9 +1,18 @@
 require "rails_helper"
 
 RSpec.describe "Users", type: :request do
+  
+  let(:valid_params) { get_user_params("valid") }
+  let(:invalid_params) { get_user_params("invalid") }
+  let(:user) { create(:user) }
+  let(:other_user) { create(:user, username: "cristobalgomez", email: "cristobal@live.com") }
+  let(:token) { get_auth_token(user.id) }
+  let(:update_params) { { "username" => "fernandocgomeztwo", "password" => "Ilovemytacos32%", "password_confirmation" => "Ilovemytacos32%" } }
+  let(:update_invalid_params) { { "username" => nil, "password" => "Ilovemytacos32%", "password_confirmation" => "Ilovemytacos32%" } }
+  
   describe "#create" do
+
     context "when request success" do
-      let(:valid_params) { get_user_params("valid") }
       before(:each) do
         post "/api/users", params: valid_params
         @resp_json = parse_resp_on_json(response)
@@ -20,8 +29,8 @@ RSpec.describe "Users", type: :request do
         expect(User.count).to eq(1)
       end
     end
+
     context "when request fails" do
-      let(:invalid_params) { get_user_params("invalid") }
       before(:each) do
         post "/api/users", params: invalid_params
         @resp_json = parse_resp_on_json(response)
@@ -34,103 +43,110 @@ RSpec.describe "Users", type: :request do
       end
     end
   end
-  describe "auth needed" do
-    let(:user) { create(:user) }
-    let(:other_user) { create(:user, username: "cristobalgomez", email: "cristobal@live.com") }
-    let(:token) { get_auth_token(user.id) }
-    describe "#show" do
-      context "when request success" do
-        before(:each) do
-          get "/api/user/#{user.id}", headers: token
-          @resp_json = parse_resp_on_json(response)
-        end
-        it "returns a 200 status" do
-          expect(response).to have_http_status(200)
-        end
-        it "returns user on JSON" do
-          matcher = get_user_matcher(user.id)
-          expect(@resp_json).to match(matcher)
-        end
+
+  describe "#show" do
+
+    context "when request success" do
+      before(:each) do
+        get "/api/user/#{user.id}", headers: token
+        @resp_json = parse_resp_on_json(response)
       end
-      context "when request fails" do
-        before(:each) do
-          get "/api/user/#{user.id + 1}", headers: token
-          @resp_json = parse_resp_on_json(response)
-        end
-        it "returns a 404 status" do
-          expect(response).to have_http_status(404)
-        end
-        it "returns an error message on JSON" do
-          expect(@resp_json).to match("user can't be found")
-        end
+      it "returns a 200 status" do
+        expect(response).to have_http_status(200)
+      end
+      it "returns user on JSON" do
+        matcher = get_user_matcher(user.id)
+        expect(@resp_json).to match(matcher)
       end
     end
-    describe '#update' do
-      let(:update_params) { { "username" => "fernandocgomeztwo", "password" => "Ilovemytacos32%", "password_confirmation" => "Ilovemytacos32%" } }
-      let(:update_invalid_params) { { "username" => nil, "password" => "Ilovemytacos32%", "password_confirmation" => "Ilovemytacos32%" } }
-      context 'when request success' do
-        before(:each) do
-          put "/api/user/#{user.id}", params: update_params, headers: token
-          @resp_json = parse_resp_on_json(response)
-        end
-        it "returns a 200 status" do
-          expect(response).to have_http_status(200)
-        end
-        it "returns updated user" do
-          expect(@resp_json["username"]).to match(update_params["username"])
-        end
+    
+    context "when request fails" do
+      before(:each) do
+        get "/api/user/#{user.id + 1}", headers: token
+        @resp_json = parse_resp_on_json(response)
       end
-      context 'when request fails because of invalid params' do
-        before(:each) do
-          put "/api/user/#{user.id}", params: update_invalid_params, headers: token
-          @resp_json = parse_resp_on_json(response)
-        end
-        it "returns a 400 status" do
-          expect(response).to have_http_status(400)
-        end
-        it "returns an object of errors on JSON" do
-          expect(@resp_json).to include("username")
-          expect(@resp_json).to_not eq({})
-        end
+      it "returns a 404 status" do
+        expect(response).to have_http_status(404)
       end
-      context 'when request fails because of unauthorized client' do
-        before(:each) do
-          put "/api/user/#{other_user.id}", params: update_params, headers: token
-          @resp_json = parse_resp_on_json(response)
-        end
-        it "returns a 401 status" do
-          expect(response).to have_http_status(401)
-        end
-        it "returns an error message on JSON" do
-          expect(@resp_json).to eq("you need admin privileges to edit other users")
-        end
+      it "returns an error message on JSON" do
+        expect(@resp_json).to match("user can't be found")
       end
     end
-    describe '#destroy' do
-      context 'request is successful' do
-        before(:each) do
-          delete "/api/user/#{user.id}", headers: token
-          @resp_json = parse_resp_on_json(response)
-        end
-        it "returns a 200 status" do
-          expect(response).to have_http_status(200)
-        end
-        it "returns a confirmation message on JSON" do
-          expect(@resp_json).to eq("user has been deleted")
-        end
-      end
-      context 'when request fails because of unauthorized client' do
-        before(:each) do
-          delete "/api/user/#{other_user.id}", headers: token
-          @resp_json = parse_resp_on_json(response)
-        end
-        it "returns a 401 status" do
-          expect(response).to have_http_status(401)
-        end
-        it "returns an error message on JSON" do
-          expect(@resp_json).to eq("you need admin privileges to delete other users")
-        end
-      end
-    end
+
   end
+
+  describe '#update' do
+
+    context 'when request success' do
+      before(:each) do
+        put "/api/user/#{user.id}", params: update_params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 200 status" do
+        expect(response).to have_http_status(200)
+      end
+      it "returns updated user" do
+        expect(@resp_json["username"]).to match(update_params["username"])
+      end
+    end
+
+    context 'when request fails because of invalid params' do
+      before(:each) do
+        put "/api/user/#{user.id}", params: update_invalid_params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 400 status" do
+        expect(response).to have_http_status(400)
+      end
+      it "returns an object of errors on JSON" do
+        expect(@resp_json).to include("username")
+        expect(@resp_json).to_not eq({})
+      end
+    end
+
+    context 'when request fails because of unauthorized client' do
+      before(:each) do
+        put "/api/user/#{other_user.id}", params: update_params, headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 401 status" do
+        expect(response).to have_http_status(401)
+      end
+      it "returns an error message on JSON" do
+        expect(@resp_json).to eq("you need admin privileges to edit other users")
+      end
+    end
+
+  end
+  
+  describe '#destroy' do
+
+    context 'request is successful' do
+      before(:each) do
+        delete "/api/user/#{user.id}", headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 200 status" do
+        expect(response).to have_http_status(200)
+      end
+      it "returns a confirmation message on JSON" do
+        expect(@resp_json).to eq("user has been deleted")
+      end
+    end
+
+    context 'when request fails because of unauthorized client' do
+      before(:each) do
+        delete "/api/user/#{other_user.id}", headers: token
+        @resp_json = parse_resp_on_json(response)
+      end
+      it "returns a 401 status" do
+        expect(response).to have_http_status(401)
+      end
+      it "returns an error message on JSON" do
+        expect(@resp_json).to eq("you need admin privileges to delete other users")
+      end
+    end
+
+  end
+  
 end

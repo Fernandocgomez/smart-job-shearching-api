@@ -68,8 +68,12 @@ RSpec.configure do |config|
   config.include(ModelHelper)
   config.include(ControllerHelper)
 
-  config.before(:suite) do
-    DatabaseCleaner.strategy = :transaction
+  # config.before(:suite) do
+  #   DatabaseCleaner.strategy = :transaction
+  #   DatabaseCleaner.clean_with(:truncation)
+  # end
+
+  config.after(:all) do 
     DatabaseCleaner.clean_with(:truncation)
   end
 
