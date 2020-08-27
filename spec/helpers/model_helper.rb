@@ -30,4 +30,13 @@ module ModelHelper
     Lead.new(params)
   end
 
+  # <----------- JobPosition --------------->
+
+  def init_job_position_instance_with_default_value(company_id, attribute)
+    params = ParamsHelper.get_job_position_params.clone
+    params["company_id"] = company_id
+    params.except!(attribute)
+    JobPosition.new(params)
+  end
+
 end
