@@ -39,4 +39,14 @@ module ModelHelper
     JobPosition.new(params)
   end
 
+  # <----------- LeadEmail --------------->
+
+  def init_lead_email_instance_with_default_value(lead_id, job_position_id, attribute)
+    params = ParamsHelper.get_lead_email_params.clone
+    params["lead_id"] = lead_id
+    params["job_position_id"] = job_position_id
+    params.except!(attribute)
+    LeadEmail.new(params)
+  end
+
 end
