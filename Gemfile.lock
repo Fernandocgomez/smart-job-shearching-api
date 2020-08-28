@@ -75,6 +75,10 @@ GEM
       activerecord
       database_cleaner (~> 1.8.0)
     diff-lcs (1.4.4)
+    dotenv (2.7.6)
+    dotenv-rails (2.7.6)
+      dotenv (= 2.7.6)
+      railties (>= 3.2)
     erubi (1.9.0)
     factory_bot (6.1.0)
       activesupport (>= 5.0.0)
@@ -192,6 +196,7 @@ DEPENDENCIES
   bootsnap (>= 1.4.2)
   byebug
   database_cleaner-active_record
+  dotenv-rails
   factory_bot_rails
   jwt
   listen (~> 3.2)

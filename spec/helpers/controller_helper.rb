@@ -12,7 +12,7 @@ module ControllerHelper
   # <----------- Auth --------------->
 
   def get_auth_token(user_id)
-    token = JWT.encode({ user_id: user_id }, "jobhunting", "HS256")
+    token = JWT.encode({ user_id: user_id }, ENV["JWT_SIGNATURE"], "HS256")
     { "Authorization" => "Bearer " + token }
   end
 
