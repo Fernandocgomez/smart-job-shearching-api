@@ -2,7 +2,7 @@ class ApplicationController < ActionController::API
 before_action :authorized
 
   def encode_token(playload)
-    JWT.encode(playload, "jobhunting", "HS256")
+    JWT.encode(playload, ENV["JWT_SIGNATURE"], "HS256")
   end
 
   def auth_header
@@ -15,7 +15,7 @@ before_action :authorized
       token = auth_header.split(" ")[1]
       # header: { 'Authorization': 'Bearer <token>' }
       begin
-        JWT.decode(token, "jobhunting", true, algorithm: "HS256")
+        JWT.decode(token, ENV["JWT_SIGNATURE"], true, algorithm: "HS256")
       rescue JWT::DecodeError
         nil
       end
